@@ -55,7 +55,7 @@ body 속성 내에서, "Hello, World!"를 다른 인사말로 변경한다.
 Landmarks 앱을 빌드할 때, 소스 편집기, 캔버스 또는 inspector와 같은 편집기 조합을 사용할 수 있다.
 사용하는 도구에 관계없이 코드는 업데이트된 상태로 유지된다.
 
-inspector를 사용한 텍스트 뷰 변경 <br>
+_inspector를 사용한 텍스트 뷰 변경_ <br>
 **Step 1** <br>
 미리 보기에서, 인사말을 Command - 클릭하여 구조화 된 편집 팝오버를 불러오고 "Show SwiftUI Inspector"를 선택한다.
 팝오버는 검사하는 뷰 유형에 따라 변경할 수 있는 다양한 속성을 보여준다.
@@ -67,4 +67,23 @@ inspector를 사용해 텍스트를 앱에 표시할 첫 번째 landmark 이름�
 글꼴을 "Title"로 변경한다.
 이는 시스템 글꼴이 텍스트에 적용되어 사용자가 선호하는 글꼴 사이즈와 설정에 올바르게 응답한다.
 
+SwiftUI 뷰를 변경하기 위해서 modifiers라 불리는 메소드를 호출한다.
+modifiers는 뷰를 감싸 화면이나 기타 속성을 변경한다.
+각 modifier는 새로운 뷰를 반환하므로, 일반적으로 수직으로 쌓인 여러 modifier를 연결한다.
+
 **Step 4** <br>
+padding() modifier를 foregroundColor(.green) modifier로 직접 편집하여 변경한다.
+이것은 텍스트의 색성을 녹색으로 변경한다.
+
+코드는 항상 뷰에 나타난다.
+inspector를 사용하여 modifier를 수정 및 제거하면 Xcode는 그에 맞게 코드를 즉시 업데이트한다.
+
+**Step 5** <br>
+이번에는 코드 편집기에서 텍스트 선언부를 Command - 클릭하여 inspector를 연 후 팝오버에서 "Show SwiftUI Inspector"를 선택한다.
+색상 팝업 메뉴틀 선택하고 텍스트 색상을 다시 검정색으로 변경한다.
+
+**Step 6** <br>
+Xcode는 변경 사항을 반역하여 자동으로 코드를 업데이트해 foregroundColor(.green) modifier를 제거한다.
+
+### Section 3
+## Combine Views Using Stacks
