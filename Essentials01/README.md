@@ -354,3 +354,4 @@ VStack {
 ```
 
 **Step 3** <br>
+Stack 위에 설정된 MapView를 추가한다.
