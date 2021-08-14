@@ -11,6 +11,10 @@ UI를 미세 조정하기 위해 Xcode의 캔버스를 사용하여 다양한 �
 첫 번째 tutorial에서 모든 설정된 뷰에 하드 코딩하여 정보를 넣었다.
 이번에는 뷰에 전달할 수 있는 데이터를 저장하는 모델을 만들 것이다.
 
+<p align="center">
+    <img width="455" src="https://user-images.githubusercontent.com/60697742/129457110-854f1f6d-220f-455c-836e-0d6ea9eefc68.png">
+</p>
+
 **Step 1** <br>
 LandmarkData.json을 프로젝트의 탐색 창으로 드래그한다.
 나타난 대화상자에서 “Copy items if needed”를 선택하고 Landmarks를 선택한 후 마친다.
@@ -108,3 +112,19 @@ ContentView.swift, CircleImage.swift, MapView.swift는 Views 그룹에, landmark
 
 ### Section 2
 ## Create the Row View
+
+<p align="center">
+    <img width="403" src="https://user-images.githubusercontent.com/60697742/129457086-6b6bd531-d233-455e-a52a-0dc5c2ce8e42.png">
+</p>
+
+이 tutorial에서 만들 첫 번째 뷰는 각 landmark에 대한 세부 정보를 표시하는 행이다.
+이 행 뷰는 표시되는 landmark의 속성에 정보를 저장하므로 하나의 뷰에서 모든 랜드마크를 보여줄 수 있다.
+이후 여러 행을 landmark 목록으로 결합한다.
+
+**Step 1** <br>
+Views 그룹에 LandmarkRow.swift라는 이름의 새로운 SwiftUI 뷰를 생성한다.
+
+**Step 2** <br>
+만약 미리 보기가 표시되지 않으면, Editor > Canvas를 눌러 캔버스가 보여지게 한 후 Resume을 누른다.
+
+**Step 3** <br>
