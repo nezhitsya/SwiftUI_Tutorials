@@ -363,6 +363,7 @@ MapView의 사이즈를 frame(width:height:)로 설정한다.
 VStack {
     MapView()
         .frame(height: 300)
+    
     VStack(alignment: .leading) {
         Text("Turtle Rock")
             .font(.title)
@@ -376,5 +377,177 @@ VStack {
         }
     }
     .padding()
+}
+```
+
+**Step 4** <br>
+실시간 미리보기를 눌러 구성된 뷰에서 렌더링 된 지도를 본다.
+실시간 미리보기가 표시되는 동안 뷰를 계속해서 편집할 수 있다.
+
+**Step 5** <br>
+Stack에 CircleImage 뷰를 삽입한다.
+
+**Step 6** <br>
+지도 뷰 위에 이미지 뷰를 겹치게 하려면 이미지에 수직으로 -130 포인트의 offset을 지정하고, 뷰 하단에서 -130 포인트의 padding을 지정한다.
+이러한 조정은 이미지를 위쪽으로 이동하여 텍스트를 위한 공간을 만든다.
+
+```swift
+VStack {
+    MapView()
+        .frame(height: 300)
+
+    CircleImage()
+        .offset(y: -130)
+        .padding(.bottom, -130)
+    
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+    }
+    .padding()
+}
+```
+
+**Step 7** <br>
+외부 VStack 하단에 Spacer를 추가하여 콘텐츠를 화면 상단으로 이동시킨다.
+
+```swift
+VStack {
+    MapView()
+        .frame(height: 300)
+
+    CircleImage()
+        .offset(y: -130)
+        .padding(.bottom, -130)
+    
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+    }
+    .padding()
+
+    Spacer()
+}
+```
+
+**Step 8** <br>
+지도 콘텐츠가 화면 상단 가장자리까지 확장되도록 하기 위해서 ignoresSafeArea(edges: .top) modifier를 지도 뷰에 추가한다.
+
+```swift
+VStack {
+    MapView()
+        .ignoresSafeArea(edges: .top)
+        .frame(height: 300)
+
+    CircleImage()
+        .offset(y: -130)
+        .padding(.bottom, -130)
+    
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+    }
+    .padding()
+
+    Spacer()
+}
+```
+
+**Step 9** <br>
+landmark에 대한 구분선(Dvider)과 추가적인 설명 텍스트를 추가한다.
+
+```swift
+VStack {
+    MapView()
+        .ignoresSafeArea(edges: .top)
+        .frame(height: 300)
+
+    CircleImage()
+        .offset(y: -130)
+        .padding(.bottom, -130)
+    
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+
+        Divider()
+
+        Text("About Turtle Rock")
+            .font(.title2)
+        Text("Descriptive text goes here.")
+    }
+    .padding()
+
+    Spacer()
+}
+```
+
+**Step 10** <br>
+마지막으로, 각 텍스트 뷰에서 하위 headline 글꼴 modifier를 포함하는 HStack으로 이동하고 보조 색상을 subheadline 텍스트에 적용한다.
+stack과 같은 레이아웃 뷰에 modifier를 적용하면 SwiftUI는 그룹에 포함된 모든 요소에 modifier를 적용한다.
+
+```swift
+VStack {
+    MapView()
+        .ignoresSafeArea(edges: .top)
+        .frame(height: 300)
+
+    CircleImage()
+        .offset(y: -130)
+        .padding(.bottom, -130)
+    
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+            Spacer()
+            Text("California")
+        }
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+
+        Divider()
+
+        Text("About Turtle Rock")
+            .font(.title2)
+        Text("Descriptive text goes here.")
+    }
+    .padding()
+
+    Spacer()
 }
 ```
