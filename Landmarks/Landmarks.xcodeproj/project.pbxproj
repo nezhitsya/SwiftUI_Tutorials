@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0B1C3E1626C663FC00157194 /* CircleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B1C3E1526C663FC00157194 /* CircleImage.swift */; };
+		0B2B66BF26C7CBCD005D2C4A /* landmarkData.json in Resources */ = {isa = PBXBuildFile; fileRef = 0B2B66BE26C7CBCD005D2C4A /* landmarkData.json */; };
+		0B2B66C126C7CBE5005D2C4A /* Landmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2B66C026C7CBE5005D2C4A /* Landmark.swift */; };
+		0B2B66C326C7CD35005D2C4A /* ModelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B2B66C226C7CD35005D2C4A /* ModelData.swift */; };
 		0BDD85B126C62C170002BBEF /* LandmarksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD85B026C62C170002BBEF /* LandmarksApp.swift */; };
 		0BDD85B326C62C170002BBEF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDD85B226C62C170002BBEF /* ContentView.swift */; };
 		0BDD85B526C62C180002BBEF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0BDD85B426C62C180002BBEF /* Assets.xcassets */; };
@@ -17,6 +20,9 @@
 
 /* Begin PBXFileReference section */
 		0B1C3E1526C663FC00157194 /* CircleImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircleImage.swift; sourceTree = "<group>"; };
+		0B2B66BE26C7CBCD005D2C4A /* landmarkData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = landmarkData.json; sourceTree = "<group>"; };
+		0B2B66C026C7CBE5005D2C4A /* Landmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Landmark.swift; sourceTree = "<group>"; };
+		0B2B66C226C7CD35005D2C4A /* ModelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelData.swift; sourceTree = "<group>"; };
 		0BDD85AD26C62C170002BBEF /* Landmarks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Landmarks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDD85B026C62C170002BBEF /* LandmarksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarksApp.swift; sourceTree = "<group>"; };
 		0BDD85B226C62C170002BBEF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,6 +62,7 @@
 		0BDD85AF26C62C170002BBEF /* Landmarks */ = {
 			isa = PBXGroup;
 			children = (
+				0B2B66BE26C7CBCD005D2C4A /* landmarkData.json */,
 				0BDD85B026C62C170002BBEF /* LandmarksApp.swift */,
 				0BDD85B226C62C170002BBEF /* ContentView.swift */,
 				0BDD85B426C62C180002BBEF /* Assets.xcassets */,
@@ -63,6 +70,8 @@
 				0BDD85B626C62C180002BBEF /* Preview Content */,
 				0B1C3E1526C663FC00157194 /* CircleImage.swift */,
 				0BE63BF026C7658E00FFB416 /* MapView.swift */,
+				0B2B66C026C7CBE5005D2C4A /* Landmark.swift */,
+				0B2B66C226C7CD35005D2C4A /* ModelData.swift */,
 			);
 			path = Landmarks;
 			sourceTree = "<group>";
@@ -134,6 +143,7 @@
 			files = (
 				0BDD85B826C62C180002BBEF /* Preview Assets.xcassets in Resources */,
 				0BDD85B526C62C180002BBEF /* Assets.xcassets in Resources */,
+				0B2B66BF26C7CBCD005D2C4A /* landmarkData.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +158,8 @@
 				0BE63BF126C7658E00FFB416 /* MapView.swift in Sources */,
 				0BDD85B126C62C170002BBEF /* LandmarksApp.swift in Sources */,
 				0B1C3E1626C663FC00157194 /* CircleImage.swift in Sources */,
+				0B2B66C126C7CBE5005D2C4A /* Landmark.swift in Sources */,
+				0B2B66C326C7CD35005D2C4A /* ModelData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,7 +296,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sparta.Landmarks;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Landmarks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -305,7 +317,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.sparta.Landmarks;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.Landmarks;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

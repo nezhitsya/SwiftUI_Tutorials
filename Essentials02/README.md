@@ -62,3 +62,37 @@ struct Landmark: Hashable, Codable {
 다음으로 landmark의 위치에 대한 정보를 관리한다.
 
 **Step 6** <br>
+JSON 데이터 구조의 저장소를 반영하는 중첩된 coordinate 유형을 사용하여 구조에 coordinate 속성을 추가한다.
+다음 단계에서 public 속성을 생성하는 데에만 사용할 것이기 때문에 이 속성을 private로 표시한다.
+
+```swift
+private var coordinates: Coordinates
+
+struct Coordinates: Hashable, Codable {
+    var latitude: Double
+    var longitude: Double
+}
+```
+
+**Step 7** <br>
+MapKit 프레임워크와 상호작용하는 데 유용한 locationCoordinate 속성을 계산한다.
+
+```swift
+var locationCoordinate: CLLocationCoordinate2D {
+    CLLocationCoordinate2D(
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude
+    )
+}
+```
+
+마지막으로, 파일의 landmark로 초기화된 배열을 생성한다.
+
+**Step 8** <br>
+프로젝트에 Swift 파일을 생성하고 ModelData.swift라 이름을 지정한다.
+
+**Step 9** <br>
+앱의 메인 번들에서 지정된 이름의 JSON 데이터를 가져오는 load(_:) 메서드를 생성한다.
+load 메서드는 반환 형식이 Codable 프로토콜을 준수하는지의 여부에 의존한다.
+
+**Step 10** <br>
