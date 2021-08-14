@@ -210,7 +210,7 @@ Xcode는 새로운 이미지 세트를 생성한다.
 
 **Step 2** <br>
 File > New > File을 선택하여 템플릿 선택기를 다시 연다.
-사용자 인터페이스 섹션에서 "SwiftUI View"를 선택하고 다음으로 넘어간다.
+User Interface 섹션에서 "SwiftUI View"를 선택하고 다음으로 넘어간다.
 파일 이름은 CircleImage.swift로 지정한 후 생성한다.
 
 이미지를 삽입하고 원하는 디자인에 일치하도록 화면을 수정할 준비가 되었다.
@@ -268,5 +268,87 @@ var body: some View {
         .clipShape(Circle())
         .overlay(Circle().stroke(Color.white, lineWidth: 4))
         .shadow(radius: 7)
+}
+```
+
+### Section 5
+## Use SwiftUI Views From Other Frameworks
+
+다음으로 주어진 좌표를 중심으로 지도를 생성한다.
+MapKit의 지도 뷰를 사용하여 지도를 가져올 수 있다.
+
+시작하기 위해서 지도를 관리할 새로운 설정 뷰를 생성한다.
+
+**Step 1** <br>
+File > New > File을 선택후 플랫폼은 iOS, SwiftUI View 템플릿을 선택한 후 다음으로 넘어간다.
+MapView.swift로 이름을 지정한 후 생성한다.
+
+**Step 2** <br>
+MapKit를 import 한다.
+같은 파일에서 SwiftUI와 특정 다른 프레임워크를 import하면, 해당 프레임워크에서 제공하는 SwiftUI 관련 기능에 접근할 수 있다.
+
+**Step 3** <br>
+지역 정보를 담은 지도를 private 상태 변수로 생성한다.
+@State 속성을 사용하여 둘 이상의 뷰에서 수정할 수 있는 앱의 데이터 소스를 설정한다.
+SwiftUI는 기본 저장소를 관리하고 값에 의존하는 뷰를 자동으로 업데이트한다.
+
+```swift
+@State private var region = MKCoordinateRegion(
+    center: CLLocationCoordinate2D(latitude: 34.011_286, longitude: -116.166_868),
+    span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+)
+```
+
+**Step 4** <br>
+기본 텍스트 뷰를 영역을 바인딩하는 지도 뷰로 변경한다.
+상태 변수에 $ 접두사를 붙이면 기본 값에 대한 참조와 같은 바인딩을 전달한다.
+사용자가 지도와 상호작용할 때, 지도는 사용자 인터페이스에 현재 표시되는 지도 부분과 일치하도록 지역 값을 업데이트한다.
+
+```swift
+var body: some View {
+    Map(coordinateRegion: $region)
+}
+```
+
+미리보기가 정적인 모드인 경우, 기본 SwiftUI 뷰만 완전히 렌더링된다.
+지도 뷰의 경우, 렌더링을 보려면 실시간 미리 보기로 전환해야 한다.
+
+**Step 5** <br>
+Live Preview를 눌러 미리보기를 라이브 모드로 변경한다.
+미리보기의 상단에 Try Again 이나 Resume 버튼을 눌러야 할 수도 있다.
+잠시 후, Turtle Rock을 중심으로 지도가 표시된다.
+실시간 미리보기에서 지도를 조작하여 축소하고 주변 지역을 볼 수 있다.
+
+### Section 6
+## Compose the Detail View
+
+이제 이름, 장소, 원형 이미지, 위치에 대한 지도 등 필요한 모든 구성요소를 구축했다.
+지금까지 사용한 도구로 설정된 뷰를 결합하여 landmark detail 뷰의 최종 디자인을 생성한다.
+
+<p align="center">
+    <img width="391" src="https://user-images.githubusercontent.com/60697742/129432107-6b4427d2-cd92-4f77-8399-99e5cfc7db0d.png">
+</p>
+
+**Step 1** <br>
+프로젝트 네비게이터에서 ContentView.swift 파일을 선택한다.
+
+**Step 2** <br>
+세 개의 텍스트 뷰를 포함하는 VStack을 다른 VStack에 포함한다.
+
+```swift
+VStack {
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+    }
+    .padding()
 }
 ```
