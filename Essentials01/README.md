@@ -355,3 +355,26 @@ VStack {
 
 **Step 3** <br>
 Stack 위에 설정된 MapView를 추가한다.
+MapView의 사이즈를 frame(width:height:)로 설정한다.
+높이 매개변수만 지정하면 뷰의 크기가 콘텐츠의 너비에 맞게 자동으로 조정된다.
+이 경우, MapView는 사용 가능한 공간을 채우기 위해 확장된다.
+
+```swift
+VStack {
+    MapView()
+        .frame(height: 300)
+    VStack(alignment: .leading) {
+        Text("Turtle Rock")
+            .font(.title)
+
+        HStack {
+            Text("Joshua Tree National Park")
+                .font(.subheadline)
+            Spacer()
+            Text("California")
+                .font(.subheadline)
+        }
+    }
+    .padding()
+}
+```
