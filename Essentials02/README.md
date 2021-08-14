@@ -96,3 +96,15 @@ var locationCoordinate: CLLocationCoordinate2D {
 load 메서드는 반환 형식이 Codable 프로토콜을 준수하는지의 여부에 의존한다.
 
 **Step 10** <br>
+LandmarkData.json에서 초기화하는 landmark 배열을 생성한다.
+
+계속 진행하기 전에, 관련 파일을 그룹화하여 프로젝트를 더 쉽게 관리할 수 있다.
+
+**Step 11** <br>
+ContentView.swift, CircleImage.swift, MapView.swift는 Views 그룹에, landmarkData.json은  Resources 그룹에, Landmark.swift, ModelData.swift는 Model 그룹에 넣는다.
+
+**Tip** <br>
+그룹에 추가할 항목을 선택한 다음 Xcode 메뉴에서 File > New > Group을 선택하여 기존 항목에서 그룹을 생성할 수 있다.
+
+### Section 2
+## Create the Row View
