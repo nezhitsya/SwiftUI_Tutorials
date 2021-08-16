@@ -128,3 +128,7 @@ Views 그룹에 LandmarkRow.swift라는 이름의 새로운 SwiftUI 뷰를 생�
 만약 미리 보기가 표시되지 않으면, Editor > Canvas를 눌러 캔버스가 보여지게 한 후 Resume을 누른다.
 
 **Step 3** <br>
+LandmarkRow의 저장 속성으로 landmark를 추가한다.
+landmark 속성을 추가하면 LandmarkRow 유형은 초기화 중에 landmark 인스턴스가 필요하기 때문에 미리보기가 작동을 멈춘다.
+
+미리보기를 수정하려면 미리보기 provider를 수정해야 한다.
