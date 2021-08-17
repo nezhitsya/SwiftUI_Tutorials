@@ -495,3 +495,76 @@ NavigationView {
     .navigationTitle("Landmarks")
 }
 ```
+
+**Step 8** <br>
+LandmarkDetail 파일에서 필요한 데이터를 설정된 유형에 전달한다.
+모든 연결이 설정되면 미리보기가 다시 작동하기 시작한다.
+
+**Step 9** <br>
+컨테이너를 VStack에서 ScrollView로 변경하여 사용자가 설명된 콘텐츠를 스크롤하고 더 이상 필요하지 않은 스페이서를 삭제할 수 있다.
+
+**Step 10** <br>
+마지막으로 세부 정보 뷰를 표시할 때 navigation bar에 제목을 지정하려면 navigationTitle(_:) modifier를 호출하고 제목을 인라인으로 표시하려면 navigationBarTitleDisplayMode( :) modifier를 호출한다.
+navigation의 변경 사항은 뷰가 navigation stack의 일부인 경우에만 적용된다.
+
+```swift
+.navigationTitle(landmark.name)
+.navigationBarTitleDisplayMode(.inline)
+```
+
+**Step 11** <br>
+목록에서 탐색할 때 세부 정보 뷰에 올바른 Landmark가 표시되는지 보려면 라이브 미리보기로 전환한다.
+
+### Section 8
+## Generate Previews Dynamically
+
+다음으로 LandmarkList_Previews 미리보기 provider에 코드를 추가하여 다양한 기기 크기에서 목록 뷰의 미리보기를 생성한다.
+기본적으로 미리보기는 활성 구성표의 장치 크기로 생성된다.
+previewDevice(_:) modifier 메서들르 호출하여 미리보기 장치를 변경할 수 있다.
+
+**Step 1** <br>
+iPhone SE 크기로 생성하도록 현재 목록 미리보기를 변경하여 시작한다.
+Xcode의 구성표 메뉴에 표시되는 모든 장치의 이름을 제공할 수 있다.
+
+```swift
+struct LandmarkList_Previews: PreviewProvider {
+    static var previews: some View {
+        LandmarkList()
+            .previewDevice(PreviewDevice(rawValue: "iPhone SE (2nd generation)"))
+    }
+}
+```
+
+**Step 2** <br>
+목록 미리보기 내에서 장치 이름 배열을 데이터로 사용하여 ForEach 인스턴스에 LandmarkList를 포함한다.
+ForEach는 list와 동일한 방식으로 컬렉션에서 작동하므로 stack, list, group 등과 같이 자식 뷰를 사용할 수 있는 모든 곳에서 사용할 수 있다.
+데이터 요소가 사용하는 문자열과 같은 단순한 값 유형인 경우, \.self를 식별자에 대한 키 경로로 사용할 수 있다.
+
+```swift
+struct LandmarkList_Previews: PreviewProvider {
+    static var previews: some View {
+        ForEach(["iPhone SE (2nd generation)", "iPhone XS Max"], id: \.self) { deviceName in
+            LandmarkList()
+                .previewDevice(PreviewDevice(rawValue: deviceName))
+        }
+    }
+}
+```
+
+**Step 3** <br>
+미리보기에 대한 label로 장치 이름을 추가하려면 previewDisplayName(_:) modifier를 사용한다.
+
+```swift
+struct LandmarkList_Previews: PreviewProvider {
+    static var previews: some View {
+        ForEach(["iPhone SE (2nd generation)", "iPhone XS Max"], id: \.self) { deviceName in
+            LandmarkList()
+                .previewDevice(PreviewDevice(rawValue: deviceName))
+                .previewDisplayName(deviceName)
+        }
+    }
+}
+```
+
+**Step 4** <br>
+캔버스에서 다양한 장치를 실험하여 뷰의 구현을 비교할 수 있다.
