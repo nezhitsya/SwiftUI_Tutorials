@@ -184,3 +184,91 @@ var body: some View {
     }
 }
 ```
+
+### Section 3
+## Customize the Row Preview
+
+Xcode의 캔버스는 PreviewProvider 프로토콜을 준수하는 편집기의 모든 유형을 자동으로 인식하고 표시한다.
+미리보기 provider는 크기 및 장치를 설정하는 옵션과 하나 이상의 뷰를 반환한다.
+
+미리보기 provider로부터 반환된 콘텐츠를 설정하여 가장 유용한 미리보기를 정확하게 만들 수 있다.
+
+**Step 1** <br>
+LandmarkRow_Preview에서 Landmark 매개변수를 Landmark 배열의 두 번째 요소로 업데이트한다.
+미리보기는 첫 번째 대신 두 번째 샘플 landmark를 표시하도록 즉시 변경된다.
+
+**Step 2** <br>
+previewLayout(_:) modifier를 사용하여 목록의 행과 비슷한 크기를 설정한다.
+
+```swift
+struct LandmarkRow_Previews: PreviewProvider {
+    static var previews: some View {
+        LandmarkRow(landmark: landmarks[1])
+            .previewLayout(.fixed(width: 300, height: 70))
+    }
+}
+```
+
+Group을 사용하여 미리보기 provier로부터 여러 미리보기를 반환할 수 있다.
+
+**Step 3** <br>
+반환된 행을 Group으로 묶고 첫 번째 행을 다시 추가한다.
+Group은 뷰 콘텐츠를 그룹화하기 위한 컨테이너이다.
+Xcode는 Group의 자식 뷰를 캔버스에서 별도의 미리보기로 생성한다.
+
+```swift
+struct LandmarkRow_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            LandmarkRow(landmark: landmarks[0])
+                .previewLayout(.fixed(width: 300, height: 70))
+            LandmarkRow(landmark: landmarks[1])
+                .previewLayout(.fixed(width: 300, height: 70))
+        }
+    }
+}
+```
+
+**Step 4** <br>
+코드를 단순화하려면 previewLayout(_:) 호출을 Group의 자식 선언부의 외부로 이동한다.
+뷰의 자식은 미리보기 구성과 같은 뷰의 맥락과 관련된 설정을 상속한다.
+
+```swift
+struct LandmarkRow_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            LandmarkRow(landmark: landmarks[0])
+            LandmarkRow(landmark: landmarks[1])
+        }
+        .previewLayout(.fixed(width: 300, height: 70))
+    }
+}
+```
+
+미리보기 provider에서 작성한 코드는 Xcode가 캔버스에 표시하는 내용만을 변경한다.
+
+### Section 4
+## Create the List of Landmarks
+
+SwiftUI의 List 유형을 사용하면, 플랫폼 별 뷰의 목록을 표시할 수 있다.
+목록의 요소는 지금까지 생성한 Stack의 자식 뷰와 같이 정적이거나 동적으로 생성될 수 있다.
+정적 뷰와 동적으로 생성된 뷰를 혼합할 수도 있다.
+
+**Step 1** <br>
+Views 그룹에 LandmarkList.swift라는 새로운 SwiftUI 뷰를 생성한다.
+
+**Step 2** <br>
+기존 텍스트 뷰를 List로 변경하고 처음 두 landmark가 있는 LandmarkRow 인스턴스를 목록의 자식으로 제공한다.
+미리보기는 iOS에 적합한 목록 스타일로 생성된 두 개의 랜드마크를 보여준다.
+
+```swift
+var body: some View {
+    List {
+        LandmarkRow(landmark: landmarks[0])
+        LandmarkRow(landmark: landmarks[1])
+    }
+}
+```
+
+### Section 5
+## Make the List Dynamic
