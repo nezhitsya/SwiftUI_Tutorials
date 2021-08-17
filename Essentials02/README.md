@@ -328,3 +328,14 @@ var body: some View {
     }
 }
 ```
+
+### Section 6
+## Set Up Navigation Between List and Detail
+
+<p align="center">
+    <img width="431" src="https://user-images.githubusercontent.com/60697742/129665161-45368222-5dad-47c2-83d9-378a8faa7479.png">
+</p>
+
+목록이 제대로 생성되었지만 아직 개별 landmark를 탭하여 해당 landmark의 세부 정보 페이지를 볼 수 없다.
+
+NavigationView에 포함된 목록에 탐색 기능을 추가한 후 NavigationLink의 각 행을 중첩하여 대상 뷰로의 전환을 설정한다.
