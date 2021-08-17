@@ -132,3 +132,55 @@ LandmarkRow의 저장 속성으로 landmark를 추가한다.
 landmark 속성을 추가하면 LandmarkRow 유형은 초기화 중에 landmark 인스턴스가 필요하기 때문에 미리보기가 작동을 멈춘다.
 
 미리보기를 수정하려면 미리보기 provider를 수정해야 한다.
+
+**Step 4** <br>
+LandmarkRow_Previews의 미리보기의 정적인 속성에서 LandmarkRow의 initializer에 Landmark 매개변수를 추가하고, Landmarks 배열의 첫 번째 요소를 지정한다.
+미리보기에 'Hello, World!'라는 텍스트가 표시된다.
+
+```swift
+struct LandmarkRow: View {
+    var landmark: Landmark
+
+    var body: some View {
+        Text("Hello, World!")
+    }
+}
+
+struct LandmarkRow_Previews: PreviewProvider {
+    static var previews: some View {
+        LandmarkRow(landmark: landmarks[0])
+    }
+}
+```
+
+이를 수정하면 행에 대한 레이아웃을 구축할 수 있다.
+
+**Step 5** <br>
+HStack에 기존 텍스트 뷰를 넣는다.
+
+**Step 6** <br>
+landmark 속성의 이름을 사용하도록 텍스트 뷰를 수정한다.
+
+```swift
+var body: some View {
+    HStack {
+        Text(landmark.name)
+    }
+}
+```
+
+**Step 7** <br>
+텍스트 뷰 앞에 이미지를 추가하고 뒤에 Spacer를 추가하여 행을 완성한다.
+
+```swift
+var body: some View {
+    HStack {
+        landmark.image
+            .resizable()
+            .frame(width: 50, height: 50)
+        Text(landmark.name)
+
+        Spacer()
+    }
+}
+```
