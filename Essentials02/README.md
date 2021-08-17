@@ -272,3 +272,59 @@ var body: some View {
 
 ### Section 5
 ## Make the List Dynamic
+
+목록의 요소를 개별적으로 지정하는 대신, 컬렉션에서 직접 행을 생성할 수 있다.
+
+데이터 컬렉션과 컬렉션의 각 요소에 대한 뷰를 제공하는 closure를 전달하여 컬렉션 요소를 표시하는 목록을 생성할 수 있다.
+목록은 제공된 closure를 사용하여 컬렉션의 각 요소를 자식 뷰로 반환한다.
+
+**Step 1** <br>
+두 개의 정적 landmark 행을 제거하고 대신에 모델 데이터의 landmark 배열을 List initializer에 전달한다.
+List는 식별 가능한 데이터로 작동한다.
+데이터를 식별하는데에 두 가지 방법이 있다.
+각 요소를 고유하게 식별하는 속성에 대한 키 경로를 데이터와 함께 전달하거나 데이터 유형이 Identifiable 프로토콜을 따르도록 하는 방법이 있다.
+
+```swift
+var body: some View {
+    List(landmarks, id: \.id) { landmark in
+
+    }
+}
+```
+
+**Step 2** <br>
+closure에서 LandmarkRow를 반환하여 동적으로 생성된 목록을 완성한다.
+Landmark 배열의 각 요소에 대해 하나의 LandmarkRow가 생성된다.
+
+```swift
+var body: some View {
+    List(landmarks, id: \.id) { landmark in
+        LandmarkRow(landmark: landmark)
+    }
+}
+```
+
+다음으로 Landmark 유형에 Identifiable 적합성을 추가하여 List 코드를 단순화한다.
+
+**Step 3** <br>
+Landmark.swift로 전환하여 식별 가능한 프로토콜에 대한 적합성을 선언한다.
+Landmark 데이터에는 Idenfitiable 프로토콜에 필요한 id 속성이 이미 존재한다.
+데이터를 읽을 때 디코딩할 속성만을 추가하면 된다.
+
+```swift
+struct Landmark: Hashable, Codable, Identifiable {
+
+}
+```
+
+**Step 4** <br>
+LandmarkList.swift로 전환하여 id 매개변수를 제거한다.
+이제부터 Landmark 요소 컬렉션을 직접 사용할 수 있다.
+
+```swift
+var body: some View {
+    List(landmarks) { landmark in
+        LandmarkRow(landmark: landmark)
+    }
+}
+```
