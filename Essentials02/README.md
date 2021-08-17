@@ -339,3 +339,159 @@ var body: some View {
 목록이 제대로 생성되었지만 아직 개별 landmark를 탭하여 해당 landmark의 세부 정보 페이지를 볼 수 없다.
 
 NavigationView에 포함된 목록에 탐색 기능을 추가한 후 NavigationLink의 각 행을 중첩하여 대상 뷰로의 전환을 설정한다.
+
+이전 tutorial에서 생성한 콘텐츠를 사용하여 상세 보기를 준비하고 대신에 목록 뷰를 표시하도록 메인 콘텐츠 뷰를 업데이트 한다.
+
+**Step 1** <br>
+LandmarkDetail.swift라는 이름의 새로은 SwiftUI 뷰를 생성한다.
+
+**Step 2** <br>
+ContentView에서 LandmarkDetail로 body 속성의 내용을 복사한다.
+
+**Step 3** <br>
+LandmarkList를 표시하도록 ContentView를 변경한다.
+
+다음 몇 단계에서는 목록 및 세부 정보 뷰 간에 navigation을 추가한다.
+
+**Step 4** <br>
+NavigationView에 동적으로 생성된 landmark 목록을 포함한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List(landmarks) { landmark in
+            LandmarkRow(landmark: landmark)
+        }
+    }
+}
+```
+
+**Step 5** <br>
+navigationTitle(_:) modifier 메서드를 호출하여 목록을 표시할 때 navigation bar의 제목을 설정한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List(landmarks) { landmark in
+            LandmarkRow(landmark: landmark)
+        }
+    }
+    .navigationTitle("Landmarks")
+}
+```
+
+**Step 6** <br>
+목록의 closure 내에서, LandmarkDetail 뷰를 목적지로 지정하여 NavigationLink에서 반환된 행을 감싼다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List(landmarks) { landmark in
+            NavigationLink(destination: LandmarkDetail()) {
+                LandmarkRow(landmark: landmark)
+            }
+        }
+        .navigationTitle("Landmarks")
+    }
+}
+```
+
+**Step 7** <br>
+라이브 모드로 전환하여 미리보기에서 직접 탐색을 시도할 수 있다.
+실시간 미리보기 버튼을 누르고 landmark를 탭하면 상세 페이지로 이동한다.
+
+### Section 7
+## Pass Data into Child Views
+
+LandmarkDetail 뷰는 여전히 하드 코딩된 세부 정보를 사용하여 landmark를 표시한다.
+LandmarkRow와 마찬가지로 LandmarkDetail 유형과 이를 구성하는 보기는 데이터 소스로 Landmark 속성을 사용해야 한다.
+
+자식 뷰부터 CircleImage, MapView 및 LandmarkDetail을 변환하여 각 행을 하드 코딩하는 대신 전달된 데이터를 표시한다.
+
+**Step 1** <br>
+CircleImage.swift에서 CircleImage에 저장된 이미지 속성을 추가한다.
+이것은 SwiftUI를 사용하여 뷰를 빌드할 때 일반적인 패던이다.
+설정된 뷰는 종종 특정 보기에 대한 일련의 modifier를 감싸고 캡슐화한다.
+
+```swift
+var image: Image
+
+var body: some View {
+    image
+        .clipShape(Circle())
+        .overlay(Circle().stroke(Color.white, lineWidth: 4))
+        .shadow(radius: 7)
+}
+```
+
+**Step 2** <br>
+Turtle Rock의 이미지를 전달하도록 미리보기 provider를 업데이트한다.
+미리보기 로직을 수정하였음에도 빌드가 실패하여 미리보기가 업데이트 되지 않는다.
+Circle Image를 인스턴스화하는 디테일 뷰에도 입력 매개변수가 필요하다.
+
+**Step 3** <br>
+MapView.swift에서 coordinate 속성을 MapView에 추가하고 미리보기 provider를 업데이트하여 고정 좌표를 전달한다.
+detail 뷰에는 새 매개변수가 필요한 map 뷰가 있기 때문에 이 변경은 빌드에도 영향을 준다.
+
+```swift
+struct MapView: View {
+    var coordinate: CLLocationCoordinate2D
+
+    @State private var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 34.011_286, longitude: -116.166_868),
+        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+    )
+
+    var body: some View {
+        Map(coordinateRegion: $region)
+    }
+}
+
+struct MapView_Previews: PreviewProvider {
+    static var previews: some View {
+        MapView(coordinate: CLLocationCoordinate2D(latitude: 34.011_286, longitude: -116.166_868))
+    }
+}
+```
+
+**Step 4** <br>
+좌표 값을 기반으로 영역을 업데이트하는 메서드를 추가한다.
+
+```swift
+private func setRegion(_ coordinate: CLLocationCoordinate2D) {
+    region = MKCoordinateRegion(
+        center: coordinate,
+        span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
+    )
+}
+```
+
+**Step 5** <br>
+현재 좌표를 기준으로 영역 계산을 실행하는 onAppear 뷰 modifier를 지도에 추가한다.
+
+```swift
+@State private var region = MKCoordinateRegion()
+
+var body: some View {
+    Map(coordinateRegion: $region).onAppear {
+        setRegion(coordinate)
+    }
+}
+```
+
+**Step 6** <br>
+LandmarkDetail.swift에서 LandmarkDetail 유형에 Landmark 속성을 추가한다.
+
+**Step 7** <br>
+LandmarkList.swift에서 현재 landmark를 목적지 LandmarkDetail에 전달한다.
+
+```swift
+NavigationView {
+    List(landmarks) { landmark in
+        NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+            LandmarkRow(landmark: landmark)
+        }
+    }
+    .navigationTitle("Landmarks")
+}
+```
