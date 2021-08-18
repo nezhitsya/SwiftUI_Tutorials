@@ -6,7 +6,7 @@ Apple Developer SwiftUI Tutorials
 ### [Creating and Combining Views](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/Essentials01)
 
 <p align="center">
-    <img width="300" src="https://user-images.githubusercontent.com/60697742/129442617-1a2e56d6-a0c5-4ad9-afd1-55be6ef16ece.png">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/129820181-85c5d9f8-e769-429e-9b6b-2c67d4e4448e.png">
 </p>
 
 ### [Building Lists and Navigation](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/Essentials02)
@@ -17,5 +17,9 @@ Apple Developer SwiftUI Tutorials
 
 ### [Handling User Input](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/Essentials03)
 
+<p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/129822660-895bc4ad-653d-407a-a175-6eca16375fd8.mov">
+</p>
+
 ## Drawing and Animation
-### [Drawing Paths and Shapes]()
+### [Drawing Paths and Shapes](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DrawingAnimation01)
