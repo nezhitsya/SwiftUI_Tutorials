@@ -295,13 +295,85 @@ Landmarks 앱은 이제 landmark의 필터링된 뷰와 필터링되지 않은 �
 FavoriteButton.swift라는 새 뷰를 생성한다.
 
 **Step 2** <br>
+버튼의 현재 상태를 나타내는 isSet 바인딩을 추가하고 미리보기에 상수 값을 제공한다.
+바인딩을 사용하기 때문에 이 뷰 내에서 수행된 변경 사항은 데이터 소스로 다시 전파된다.
+
+```swift
+struct FavoriteButton: View {
+    @Binding var isSet: Bool
+
+    var body: some View {
+        Text("Hello, World!")
+    }
+}
+
+struct FavoriteButton_Previews: PreviewProvider {
+    static var previews: some View {
+        FavoriteButton(isSet: .constant(true))
+    }
+}
+```
 
 **Step 3** <br>
+isSet 상태를 전환하고 상태에 따라 모양을 변경하는 작업으로 Button을 생성한다.
+
+```swift
+var body: some View {
+    Button(action: {
+        isSet.toggle()
+    }) {
+        Image(systemName: isSet ? "star.fill" : "star")
+            .foregroundColor(isSet ? Color.yellow : Color.gray)
+    }
+}
+```
+
+프로젝트가 성장함에 따라 계층 구조를 추가하는 것이 좋다.
+계속 진행하기 전에 몇 개의 그룹을 더 생성한다.
 
 **Step 4** <br>
+CircleImage.swift, MapView.swift 및 FavoriteButton.swift를 Helpers 그룹으로, landmark 뷰들은 Landmarks 그룹으로 넣는다.
+
+다음으로, 버튼의 isSet 속성을 주어진 landmark의 isFavorite 속성에 바인딩하여 detail 뷰에 FavoriteButton을 추가한다.
 
 **Step 5** <br>
+LandmarkDetail.swift로 전환하고 입력 landmark의 인덱스를 모델 데이터와 비교하여 계산한다.
+이를 지원하려면 환경의 모델 데이터에도 접근해야 한다.
+
+```swift
+@EnvironmentObject var modelData: ModelData
+var landmark: Landmark
+
+var landmarkIndex: Int {
+    modelData.landmarks.firstIndex(where: { $0.id == landmark.id })!
+}
+```
+
+```swift
+struct LandmarkDetail_Previews: PreviewProvider {
+    static let modelData = ModelData()
+
+    static var previews: some View {
+        LandmarkDetail(landmark: modelData.landmarks[0])
+            .environmentObject(modelData)
+    }
+}
+```
 
 **Step 6** <br>
+새로운 FavoriteButton을 사용하여 landmark의 이름을 HStack에 포함한다. 달러 기호($)를 사용하여 isFavorite 속성에 대한 바인딩을 제공한다.
+modelData 객체와 함께 LandmarkIndex를 사용하여 버튼이 모델 객체에 저장된 landmark의 isFavorite 속성을 업데이트하도록 한다.
+
+```swift
+HStack {
+    Text(landmark.name)
+        .font(.title)
+        .foregroundColor(.primary)
+    FavoriteButton(isSet: $modelData.landmarks[landmarkIndex].isFavorite)
+}
+```
 
 **Step 7** <br>
+LandmarkList.swift로 다시 전환하고 실시간 미리보기를 킨다.
+목록에서 세부 정보로 이동하고 버튼을 눌러 목록으로 돌아가도 변경 사항이 유지된다.
+두 뷰 모두 환경의 동일한 모델 객체를 접근하기 때문에 두 뷰는 일관성을 유지한다.
