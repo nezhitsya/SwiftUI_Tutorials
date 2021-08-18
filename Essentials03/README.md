@@ -95,6 +95,10 @@ var body: some View {
 ### Section 3
 ## Add a Control to Toggle the State
 
+<p align="center">
+    <img width="321" src="https://user-images.githubusercontent.com/60697742/129817024-8067ab3d-6541-482b-949d-bfa6a7966ac2.png">
+</p>
+
 목록의 필터에 대한 사용자의 제어 권한을 부여하기 위해 showFavoritesOnly 값을 변경할 수 있는 컨트롤을 추가해야 한다.
 Toggle control에 바인딩을 전달하여 이 작업을 수행한다.
 
@@ -138,17 +142,52 @@ Toggle(isOn: $showFavoritesOnly) {
 
 ### Section 4
 ## Use an Observable Object for Storage
+어떤 특정 landmark가 즐겨찾기인지 사용자가 제어할 수 있도록 준비하기 위해서 먼저 landmark 데이터를 observable 객체에 저장한다.
+
+observable 객체는 SwiftUI 환경의 저장소에서 뷰에 바인딩할 수 있는 데이터에 대해 설정된 개체이다.
+SwiftUI는 뷰에 영향을 줄 수 있는 observable 객체의 변경 사항을 감시하고 변경 후 뷰의 올바른 버전을 표시한다.
 
 **Step 1** <br>
+프로젝트 탐색 창에서 ModelData.swift를 선택한다.
 
 **Step 2** <br>
+Combine 프레임워크에서 ObservableObject 프로토콜을 준수하는 새 모델 유형을 선언한다.
+
+```swift
+import Combine
+
+final class ModelData: ObservableObject {
+}
+```
 
 **Step 3** <br>
+landmark 배열을 모델로 이동한다.
+
+```swift
+final class ModelData: ObservableObject {
+    var landmarks: [Landmark] = load("landmarkData.json")
+}
+```
+
+Observable 객체는 구독자가 변경 사항을 선택할 수 있도록 데이터에 대한 변경 사항을 게시해야 한다.
 
 **Step 4** <br>
+landmark 배열에 @Published 속성을 추가한다.
+
+```swift
+final class ModelData: ObservableObject {
+    @Published var landmarks: [Landmark] = load("landmarkData.json")
+}
+```
 
 ### Section 5
 ## Adopt the Model Object in Your Views
+
+<p align="center">
+    <img width="430" src="https://user-images.githubusercontent.com/60697742/129817028-8a5cbd6e-84d1-4836-b1d2-a95ddeb08fec.png">
+</p>
+
+ModelData 객체를 생성했으므로 뷰를 업데이트하여 앱의 데이터 저장소로 채택햐애 한다.
 
 **Step 1** <br>
 
