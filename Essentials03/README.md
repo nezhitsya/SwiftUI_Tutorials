@@ -190,23 +190,109 @@ final class ModelData: ObservableObject {
 ModelData 객체를 생성했으므로 뷰를 업데이트하여 앱의 데이터 저장소로 채택햐애 한다.
 
 **Step 1** <br>
+LandmarkList.swift에서 @EnvironmentObject 속성 선언을 뷰에 추가하고 environmentObject(_:) modifier를 미리보기에 추가한다.
+modelData 속성은 environmentObject(_:) modifier가 상위 항목에 적용된 경우 해당 값을 자동으로 가져온다.
+
+```swift
+@EnvironmentObject var modelData: ModelData
+@State private var showFavoritesOnly = false
+```
+
+```swift
+struct LandmarkList_Previews: PreviewProvider {
+    static var previews: some View {
+        LandmarkList()
+            .environmentObject(ModelData())
+    }
+}
+```
 
 **Step 2** <br>
+landmark를 필터링할 때 modelData.landmarks를 데이터로 사용한다.
+
+```swift
+var filteredLandmarks: [Landmark] {
+     modelData.landmarks.filter { landmark in
+        (!showFavoritesOnly || landmark.isFavorite)
+    }
+}
+```
 
 **Step 3** <br>
+환경에서 ModelData 객체와 함께 작동하도록 LandmarkDetail 뷰를 업데이트한다.
+
+```swift
+struct LandmarkDetail_Previews: PreviewProvider {
+    static var previews: some View {
+        LandmarkDetail(landmark: ModelData().landmarks[0])
+    }
+}
+```
 
 **Step 4** <br>
+ModelData 객체와 함께 작동하도록 LandmarkRow 미리보기를 업데이트한다.
+
+```swift
+struct LandmarkRow_Previews: PreviewProvider {
+    static var landmarks = ModelData().landmarks
+
+    static var previews: some View {
+        Group {
+            LandmarkRow(landmark: landmarks[0])
+            LandmarkRow(landmark: landmarks[1])
+        }
+        .previewLayout(.fixed(width: 300, height: 70))
+    }
+}
+```
 
 **Step 5** <br>
+ContentView 미리보기를 업데이트하여 환경에 모델 객체를 추가하면 도느 하윕 뷰에서 객체를 사용할 수 있다.
+하위 뷰의 환경에 모델 객체가 필요한 경우 미리 보기가 실패하지만, 미리 보고 있는 뷰에는 environmentObject(_:) modifier가 없다.
+
+```swift
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+            .environmentObject(ModelData())
+    }
+}
+```
+
+다음으로 시뮬레이터나 기기에서 앱을 실행할 때 환경에 모델 객체를 배치하도록 앱 인스턴스를 업데이트한다.
 
 **Step 6** <br>
+LandmarksApp을 업데이트하여 모델 인스턴스를 생성하고 이를 environmentObject(_:) modifier를 사용하여 ContentView에 제공한다.
+@StateObject 속성을 사용하여 지정된 속성에 대한 모델 객체를 앱 수명 동안 한 번만 초기화한다.
+이는 앱 인스턴스에서 속성을 사용하는 경우뿐만 아니라 뷰에서 사용할 경우에도 해당된다.
+
+```swift
+@main
+struct LandmarksApp: App {
+    @StateObject private var modelData = ModelData()
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(modelData)
+        }
+    }
+}
+```
 
 **Step 7** <br>
+LandmarkList.swift로 다시 전환하고 실시간 미리보기를 켜 모든 것이 제대로 작동하는지 확인한다.
 
 ### Section 6
 ## Create a Favorite Button for Each Landmark
 
+Landmarks 앱은 이제 landmark의 필터링된 뷰와 필터링되지 않은 뷰 간을 전환할 수 있지만 즐겨찾는 landmark 목록은 여전히 하드 코딩되어 있다.
+사용자가 즐겨찾기를 추가 및 제거할 수 있도록 하려면 landmark detail 뷰에 즐겨찾기 버튼을 추가해야 한다.
+
+먼저 재사용 가능한 FavoriteButton을 생성한다.
+
 **Step 1** <br>
+FavoriteButton.swift라는 새 뷰를 생성한다.
 
 **Step 2** <br>
 
