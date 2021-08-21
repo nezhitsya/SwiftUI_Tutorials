@@ -145,6 +145,8 @@ static let segments = [
 SwiftUI의 그래픽 API를 사용하여 맞춤형 배지 모양을 그린다.
 
 **Step 1** <br>
+File > New > File을 사용하여 다른 새 파일을 생성한다.
+이번에는 iOS Templates sheet에서 SwiftUI View를 선택한다.
 
 **Step 2** <br>
 
