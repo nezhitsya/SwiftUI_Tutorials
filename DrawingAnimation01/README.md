@@ -147,10 +147,25 @@ SwiftUI의 그래픽 API를 사용하여 맞춤형 배지 모양을 그린다.
 **Step 1** <br>
 File > New > File을 사용하여 다른 새 파일을 생성한다.
 이번에는 iOS Templates sheet에서 SwiftUI View를 선택한다.
+Next를 눌러 파일 이름을 BadgeBackground.swift로 지정한다.
 
 **Step 2** <br>
+BadgeBackground.swift에서 Path 모양을 배지에 추가하고 fill() modifier를 적용하여 형태를 뷰로 변경한다.
+Paths를 사용하여 선, 곡선 및 기타 그리기 기본 요소를 결합한 배지의 육각형 배경과 같은 더 복잡한 모양을 형성한다.
+
+```swift
+struct BadgeBackground: View {
+    var body: some View {
+        Path { path in
+
+        }
+        .fill(Color.black)
+    }
+}
+```
 
 **Step 3** <br>
+크기가 100 x 100 픽셀인 컨테이너를 가정하고 경로에 시작점을 추가한다.
 
 **Step 4** <br>
 
