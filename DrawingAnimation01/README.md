@@ -166,10 +166,96 @@ struct BadgeBackground: View {
 
 **Step 3** <br>
 크기가 100 x 100 픽셀인 컨테이너를 가정하고 경로에 시작점을 추가한다.
+move(to:) 메서드는 마치 가상의 펜이나 연필이 그리기 시작을 기다리는 영역 위로 마우스를 가져가는 것처럼 모양의 경계 내에서 그리기 커서를 이동한다.
+
+```swift
+var body: some View {
+    Path { path in
+        var width: CGFloat = 100.0
+        let height = width
+        path.move(
+            to: CGPoint(
+                x: width * 0.95,
+                y: height * 0.20
+            )
+        )
+    }
+    .fill(Color.black)
+}
+```
 
 **Step 4** <br>
+대략적인 육각형 모양을 만들기 위해 shape 데이터릐 각 점에 대한 선을 그린다.
+addLine(to:) 메서드는 단일 점을 가져와 그린다.
+addLine(to:)에 대한 연속적인 호출은 이전 지점에서 줄이 시작되고 새 지점으로 계속된다.
+
+```swift
+var body: some View {
+    Path { path in
+        var width: CGFloat = 100.0
+        let height = width
+        path.move(
+            to: CGPoint(
+                x: width * 0.95,
+                y: height * 0.20
+            )
+        )
+
+        HexagonParameters.segments.forEach { segment in
+            path.addLine(
+                to: CGPoint(
+                    x: width * segment.line.x,
+                    y: height * segment.line.y
+                )
+            )
+        }
+    }
+    .fill(Color.black)
+}
+```
+
+육각형이 조금 이상해 보이더라도 걱정하지 않아도 된다.
+모양의 모서리에서 각 세그먼트의 곡선 부분을 무시하기 때문이다.
+다음으로 그것을 설명한다.
 
 **Step 5** <br>
+addQuadCurve(to:control:) 메서드를 사용하여 배지 모서리에 대한 Bézier 곡선을 그린다.
+
+```swift
+var body: some View {
+    Path { path in
+        var width: CGFloat = 100.0
+        let height = width
+        path.move(
+            to: CGPoint(
+                x: width * 0.95,
+                y: height * (0.20 + HexagonParameters.adjustment)
+            )
+        )
+
+        HexagonParameters.segments.forEach { segment in
+            path.addLine(
+                to: CGPoint(
+                    x: width * segment.line.x,
+                    y: height * segment.line.y
+                )
+            )
+
+            path.addQuadCurve(
+                to: CGPoint(
+                    x: width * segment.curve.x,
+                    y: height * segment.curve.y
+                ),
+                control: CGPoint(
+                    x: width * segment.control.x,
+                    y: height * segment.control.y
+                )
+            )
+        }
+    }
+    .fill(Color.black)
+}
+```
 
 **Step 6** <br>
 
