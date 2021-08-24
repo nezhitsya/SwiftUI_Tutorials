@@ -381,23 +381,97 @@ Landmark 배지의 중앙에는 Landmark 앱 아이콘이 나타나는 산을 �
 먼저 앱 아이콘을 지정하여 배지 모양을 설정한다.
 
 **Step 1** <br>
+프로젝트의 Asset 카탈로그에서 빈 AppIcon 항목을 삭제하고 다운로드한 프로젝트의 AppIcon.appiconset 폴더를 Asset 카탈로그로 드래그 한다.
+Xcode는 폴더를 앱 아이콘의 모든 크기 변형이 포함된 것으로 인식하고 카탈로그에 해당 항목을 생성한다.
+
+다음으로 일치하는 배지 상징을 만든다.
 
 **Step 2** <br>
+배지 디자인에서 회전된 패턴으로 스탬프 처리된 산 모양에 대해 BadgeSymbol이라는 새 사용자 지정 뷰를 생성한다.
 
 **Step 3** <br>
+path API를 사용하여 상징의 상단 부분을 그린다.
+spacing, topWidth 및 topHeight 상수와 관련된 숫자를 조정하여 전체 모양에 미치는 영향을 확인한다.
+
+```swift
+struct BadgeSymbol: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                let width = min(geometry.size.width, geometry.size.height)
+                let height = width * 0.75
+                let spacing = width * 0.030
+                let middle = width * 0.5
+                let topWidth = width * 0.226
+                let topHeight = height * 0.488
+
+                path.addLines([
+                    CGPoint(x: middle, y: spacing),
+                    CGPoint(x: middle - topWidth, y: topHeight - spacing),
+                    CGPoint(x: middle, y: topHeight / 2 + spacing),
+                    CGPoint(x: middle + topWidth, y: topHeight - spacing),
+                    CGPoint(x: middle, y: spacing)
+                ])
+            }
+        }
+    }
+}
+```
 
 **Step 4** <br>
+상징의 아래쪽 부분을 그린다.
+move(to:) modifier를 사용하여 동일한 경로에 있는 여러 모양 사이에 간격을 삽입한다.
+
+```swift
+path.move(to: CGPoint(x: middle, y: topHeight / 2 + spacing * 3))
+path.addLines([
+    CGPoint(x: middle - topWidth, y: topHeight + spacing),
+    CGPoint(x: spacing, y: height - spacing),
+    CGPoint(x: width - spacing, y: height - spacing),
+    CGPoint(x: middle + topWidth, y: topHeight + spacing),
+    CGPoint(x: middle, y: topHeight / 2 + spacing * 3)
+])
+```
 
 **Step 5** <br>
+보라색으로 상징을 채운다.
+
+```swift
+static let symbolColor = Color(red: 79.0 / 255, green: 79.0 / 255, blue: 191.0 / 255)
+```
 
 **Step 6** <br>
+회전된 상징의 개념을 캡슐화하는 새로운 RotatedBadgeSymbol 뷰를 만든다.
+미리보기에서 각도를 조정하여 회전 효과를 테스트한다.
+
+```swift
+struct RotatedBadgeSymbol: View {
+    let angle: Angle
+    
+    var body: some View {
+        BadgeSymbol()
+            .padding(-60)
+            .rotationEffect(angle, anchor: .bottom)
+    }
+}
+```
 
 ### Section 4
 ## Combine the Badge Foreground and Background
 
+<p align="center">
+    <img width="455" src="https://user-images.githubusercontent.com/60697742/130548439-79cda86c-743a-47f7-8d16-8b521330dba1.png">
+</p>
+
+배지 디자인은 배지 배경 위에서 산 모양을 여러 번 회전하고 반복해야 한다.
+
+새로운 회전 유형을 정의하고 ForEach 뷰를 활용하여 산 모양의 여러 복사본에 동일한 조정을 적용한다.
+
 **Step 1** <br>
+Badge라는 새 SwiftUI 뷰를 생성한다.
 
 **Step 2** <br>
+Badge의 body 부분에 BadgeBackground를 배치한다.
 
 **Step 3** <br>
 
