@@ -258,15 +258,127 @@ var body: some View {
 ```
 
 **Step 6** <br>
+배지가 값(100)을 하드코딩하는 대신 크기를 정의하는 뷰의 크기를 사용할 수 있도록 GeometryReader에서 경로를 감싼다.
+형상의 두 치수 중 가장 작은 치수를 사용하면 배지의 포함 뷰가 정사각형이 아닐 때 배지의 가로 세로 비율이 유지된다.
+
+```swift
+var body: some View {
+    GeometryReader { geometry in
+        Path { path in
+            var width: CGFloat = min(geometry.size.width, geometry.size.height)
+            let height = width
+            path.move(
+                to: CGPoint(
+                    x: width * 0.95,
+                    y: height * (0.20 + HexagonParameters.adjustment)
+                )
+            )
+
+            HexagonParameters.segments.forEach { segment in
+                path.addLine(
+                    to: CGPoint(
+                        x: width * segment.line.x,
+                        y: height * segment.line.y
+                    )
+                )
+
+                path.addQuadCurve(
+                    to: CGPoint(
+                        x: width * segment.curve.x,
+                        y: height * segment.curve.y
+                    ),
+                    control: CGPoint(
+                        x: width * segment.control.x,
+                        y: height * segment.control.y
+                    )
+                )
+            }
+        }
+        .fill(Color.black)
+    }
+}
+```
 
 **Step 7** <br>
+xScale을 사용하여 x축에서 모양의 크기를 조정한 다음 xOffset을 추가하여 해당 구조 내에서 모양을 가운데에 맞춘다.
+
+```swift
+var body: some View {
+    GeometryReader { geometry in
+        Path { path in
+            var width: CGFloat = min(geometry.size.width, geometry.size.height)
+            let height = width
+            let xScale: CGFloat = 0.832
+            let xOffset = (width * (1.0 - xScale)) / 2.0
+            path.move(
+                to: CGPoint(
+                    x: width * 0.95 + xOffset,
+                    y: height * (0.20 + HexagonParameters.adjustment)
+                )
+            )
+
+            HexagonParameters.segments.forEach { segment in
+                path.addLine(
+                    to: CGPoint(
+                        x: width * segment.line.x + xOffset,
+                        y: height * segment.line.y
+                    )
+                )
+
+                path.addQuadCurve(
+                    to: CGPoint(
+                        x: width * segment.curve.x + xOffset,
+                        y: height * segment.curve.y
+                    ),
+                    control: CGPoint(
+                        x: width * segment.control.x + xOffset,
+                        y: height * segment.control.y
+                    )
+                )
+            }
+        }
+        .fill(Color.black)
+    }
+}
+```
 
 **Step 8** <br>
+검은 단색 배경을 설계에 맞게 그라데이션으로 대체한다.
+
+```swift
+.fill(LinearGradient(
+    gradient: Gradient(colors: [Self.gradientStart, Self.gradientEnd]),
+    startPoint: UnitPoint(x: 0.5, y: 0),
+    endPoint: UnitPoint(x: 0.5, y: 0.6)
+))
+```
 
 **Step 9** <br>
+gradient fill에 aspectRatio(_:contentMode:) modifier를 적용한다.
+1 : 1 가로 세로 비율를 유지함으로써 배지는 상위뷰가 정사각형이 아니더라도 뷰의 중심에서 위치를 유지한다.
+
+```swift
+GeometryReader { geometry in
+    ...
+}
+.aspectRatio(1, contentMode: .fit)
+```
 
 ### Section 3
 ## Draw the Badge Symbol
+
+<p align="center">
+    <img width="304" src="https://user-images.githubusercontent.com/60697742/130547036-b9666ef7-7901-4ebc-806d-245e56bab3fb.png">
+</p>
+
+
+Landmark 배지의 중앙에는 Landmark 앱 아이콘이 나타나는 산을 기반으로 한 맞춤형 휘장이 있다.
+
+산의 상징은 두 가지 모양으로 구성되어 있다.
+하나는 봉우리에 있는 눈 덮인 곳을 나타내고 다른 하나는 접근로에 있는 초목을 나타낸다.
+작은 간격으로 분리된 두 개의 부분 삼각형 모양을 사용하여 그린다.
+
+먼저 앱 아이콘을 지정하여 배지 모양을 설정한다.
 
 **Step 1** <br>
 
