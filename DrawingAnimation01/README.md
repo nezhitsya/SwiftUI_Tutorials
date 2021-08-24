@@ -473,10 +473,69 @@ Badge라는 새 SwiftUI 뷰를 생성한다.
 **Step 2** <br>
 Badge의 body 부분에 BadgeBackground를 배치한다.
 
+```swift
+struct Badge: View {
+    var body: some View {
+        BadgeBackground()
+    }
+}
+```
+
 **Step 3** <br>
+배지의 상징을 ZStack에 배치하여 배지 배경 위에 놓는다.
+
+```swift
+struct Badge: View {
+    var badgeSymbols: some View {
+        RotatedBadgeSymbol(angle: Angle(degrees: 0))
+            .opacity(0.5)
+    }
+    
+    var body: some View {
+        ZStack {
+            BadgeBackground()
+            
+            badgeSymbols
+        }
+    }
+}
+```
+
+지금 보이는 것처럼 배지 상징이 의도한 디자인과 배경의 상대적 크기에 비해 너무 크다.
 
 **Step 4** <br>
+주변 구조를 읽고 상징 크기를 조정하여 배지 상징의 크기를 수정한다.
+
+```swift
+var body: some View {
+    ZStack {
+        BadgeBackground()
+            
+        GeometryReader { geometry in
+            badgeSymbols
+                .scaleEffect(1.0 / 4.0, anchor: .top)
+                .position(x: geometry.size.width / 2.0, y: (3.0 / 4.0) * geometry.size.height)
+        }
+    }
+}
+```
 
 **Step 5** <br>
+ForEach 뷰를 추가하어 배지 상징의 복사본을 회전하고 표시한다.
+전체 360° 회전이 8개의 세그먼크로 분할되어 산 상징을 반복하여 태양과 같은 패턴을 만든다.
+
+```swift
+static let rotationCount = 8
+
+var badgeSymbols: some View {
+    ForEach(0..<Badge.rotationCount) { i in
+        RotatedBadgeSymbol(
+            angle: .degrees(Double(i) / Double(Badge.rotationCount)) * 360.0
+        )
+    }
+    .opacity(0.5)
+}
+```
 
 **Step 6** <br>
+프로젝트를 체계적으로 유지하기 위해 다음 tutorial로 이동하기 전에 이 tutorial에서 추가한 모든 새 파일을 Badges 그룹으로 추가한다.
