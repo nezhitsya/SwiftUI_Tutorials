@@ -293,13 +293,57 @@ extension AnyTransition {
 이 section에서는 구성된 애니메이션을 사용하여 그래프를 구성하는 캡슐에 동적이고 물결치는 전환을 제공한다.
 
 **Step 1** <br>
+HikeView에서 showDetail의 기본 값을 true로 변경하고 미리보기를 캔버스에 고정한다.
+이렇게 하면 다른 파일에서 애니메이션 작업을 하는 동안 그래프를 상황에 맞게 볼 수 있다.
 
 **Step 2** <br>
+HikeGraph.swift에서 새로운 리플 애니메이션을 정의하고 생성된 각 그래프 캡슐에 슬라이드 전환과 함께 적용한다.
+
+```swift
+extension Animation {
+    static func ripple() -> Animation {
+        Animation.default
+    }
+}
+```
 
 **Step 3** <br>
+애니메이션을 스프링 애니메이션으로 전환하고 감쇠 비율을 줄여 막대를 회전시킨다.
+실시간 미리보기에서 고도, 심박수, 페이스 사이를 전환하여 애니메이션 효과를 볼 수 있다.
+
+```swift
+extension Animation {
+    static func ripple() -> Animation {
+        Animation.spring(dampingFraction: 0.5)
+    }
+}
+```
 
 **Step 4** <br>
+애니메이션 속도를 약간 높여 각 막대가 새 위치로 이동하는 데 걸리는 시간을 줄인다.
+
+```swift
+extension Animation {
+    static func ripple() -> Animation {
+        Animation.spring(dampingFraction: 0.5)
+            .speed(2)
+    }
+}
+```
 
 **Step 5** <br>
+그래프에서 캡슐의 위치를 기반으로 하는 각 애니메이션에 지연을 추가한다.
+
+```swift
+extension Animation {
+    static func ripple(index: Int) -> Animation {
+        Animation.spring(dampingFraction: 0.5)
+            .speed(2)
+            .delay(0.03 * Double(index))
+    }
+}
+```
 
 **Step 6** <br>
+그래프 간에 전환이 사용자 지정 애니메이션에 어떻게 잔물결 효과를 제공하는지 관찰한다.
+다음 tutorial로 이동하기 전에 미리보기의 고정을 해제해야 한다.
