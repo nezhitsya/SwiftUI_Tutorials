@@ -167,15 +167,68 @@ Button(action: {
 여기에서는 사용가바 버튼을 누르고 showDetail 상태 속성을 전환할 때 발생하는 모든 변경 사항에 애니메이션을 적용한다.
 
 **Step 1** <br>
+withAnimation 함수에 대한 호출로 showDetail.toggle() 호출을 감싼다.
+showDetail 속성의 영향을 받는 두 뷰(공개 버튼 및 HikeDetail 뷰)에는 애니메이션 전환이 있다.
+
+```swift
+Button(action: {
+    withAnimation {
+        self.showDetail.toggle()
+    }
+}) {
+    Image(systemName: "chevron.right.circle")
+        .imageScale(.large)
+        .rotationEffect(.degrees(showDetail ? 90 : 0))
+        .scaleEffect(showDetail ? 1.5 : 1)
+        .padding()
+}
+```
+
+애니메이션을 느리게 하여 SwiftUI 애니메이션이 어떻게 중단되는지 확인한다.
 
 **Step 2** <br>
+withAnimation 함수에 4초 길이의 기본 애니메이션을 전달한다.
+animation(_:) modifier에 전달한 것과 같은 종류의 애니메이션을 withAnimation 함수에 전달할 수 있다.
+
+```swift
+Button(action: {
+    withAnimation(.easeInOut(duration: 4)) {
+        self.showDetail.toggle()
+    }
+}) {
+    Image(systemName: "chevron.right.circle")
+        .imageScale(.large)
+        .rotationEffect(.degrees(showDetail ? 90 : 0))
+        .scaleEffect(showDetail ? 1.5 : 1)
+        .padding()
+}
+```
 
 **Step 3** <br>
+애니메이션 중간에 그래프 뷰를 열고 닫는 실험을 한다.
 
 **Step 4** <br>
+다음 section을 계속하기 전에 호출의 입력 매개변수를 제거하여 기본 애니메이션을 사용하도록 withAnimaiton 함수를 복원한다.
+
+```swift
+Button(action: {
+    withAnimation {
+        self.showDetail.toggle()
+    }
+}) {
+    Image(systemName: "chevron.right.circle")
+        .imageScale(.large)
+        .rotationEffect(.degrees(showDetail ? 90 : 0))
+        .scaleEffect(showDetail ? 1.5 : 1)
+        .padding()
+}
+```
 
 ### Section 4
 ## Customize View Transitions
+
+기본적으로 뷰는 페이드 인 및 페이드 아웃을 통해 화면 안팎으로 전환된다.
+transition(_:) modifier를 사용하여 이 전환을 설정할 수 있다.
 
 **Step 1** <br>
 
