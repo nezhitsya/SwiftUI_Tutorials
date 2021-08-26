@@ -162,6 +162,10 @@ Button(action: {
 ### Section 3
 ## Animate the Effects of State Changes
 
+<p align="center">
+    <img width="173" src="https://user-images.githubusercontent.com/60697742/130909552-a81b4de4-e7f8-41b8-9cc1-d4237675186e.png">
+</p>
+
 개별 뷰에 애니메이션을 적용하는 방법을 배웠으므로 이제 상태 값을 변경하는 위치에 애니메이션을 추가할 차례이다.
 
 여기에서는 사용가바 버튼을 누르고 showDetail 상태 속성을 전환할 때 발생하는 모든 변경 사항에 애니메이션을 적용한다.
@@ -231,15 +235,62 @@ Button(action: {
 transition(_:) modifier를 사용하여 이 전환을 설정할 수 있다.
 
 **Step 1** <br>
+조건부로 표시되는 HikeView에 transition(_:) modifier를 추가한다.
+이제 그래프가 시야에 들어오고 사라지면서 나타나고 사라진다.
+
+```swift
+if showDetail {
+    HikeDetail(hike: hike)
+        .transition(.slide)
+}
+```
 
 **Step 2** <br>
+방금 AnyTransition의 정적 속성으로 추가한 전환을 추출하고 뷰의 전환 modifier에서 새 속성에 접근한다.
+이렇게 하면 사용자 지정 전환을 확장할 때 코드가 깨끗하게 유지된다.
+
+```swift
+if showDetail {
+    HikeDetail(hike: hike)
+        .transition(.moveAndFade)
+}
+```
 
 **Step 3** <br>
+move(edge:) modifier를 사용하도록 전환하여 그래프가 같은 쪽에서 들어오고 나가도록 한다.
+
+```swift
+extension AnyTransition {
+    static var moveAndFade: AnyTransition {
+        AnyTransition.move(edge: .trailing)
+    }
+}
+```
 
 **Step 4** <br>
+asymmetric(insertion:removal:) modifier를 사용하여 뷰가 나타나고 사라질 때 서로 다른 전환을 제공한다.
+
+```swift
+extension AnyTransition {
+    static var moveAndFade: AnyTransition {
+        let insertion = AnyTransition.move(edge: .trailing)
+            .combined(with: .opacity)
+        let removal = AnyTransition.scale
+            .combined(with: .opacity)
+        return .asymmetric(insertion: insertion, removal: removal)
+    }
+}
+```
 
 ### Section 5
 ## Compose Animations for Complex Effects
+
+<p align="center">
+    <img width="350" src="https://user-images.githubusercontent.com/60697742/130909748-d5a80ba5-3963-4004-84ec-0f09d4f0176a.png">
+</p>
+
+막대 아래에 있는 버튼을 누르면 그래프가 세 가지 다른 데이터 세트 간에 전환된다.
+이 section에서는 구성된 애니메이션을 사용하여 그래프를 구성하는 캡슐에 동적이고 물결치는 전환을 제공한다.
 
 **Step 1** <br>
 
