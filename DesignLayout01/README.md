@@ -266,17 +266,91 @@ var body: some View {
 카테고리 홈 페이지에 행과 추천 이미지를 추가한다.
 
 **Step 1** <br>
+CategoryHome의 본문을 업데이트하여 행 유형의 인스턴스에 카테고리 정보를 전달한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            ForEach(modelData.categories.keys.sorted(), id: \.self) { key in
+                CategoryRow(categoryName: key, items: modelData.categories[key]!)
+            }
+        }
+        .navigationTitle("Featured")
+    }
+}
+```
+
+다음으로, 뷰 상단에 주요 landmark를 추가한다.
+이를 위해 landmark 데이터에서 더 많은 정보가 필요하다.
 
 **Step 2** <br>
+Landmark.swift에서 새로운 isFeatured 속성을 추가한다.
+추가한 다른 landmark 속성과 마찬가지로 이 Boolean은 이미 데이터에 존재하므로 새 속성을 선언하면 된다.
 
 **Step 3** <br>
+ModelData.swift에서 isFeatured가 true로 설정된 landmark만 포함하는 새로운 계산 기능 배열을 추가한다.
+
+```swift
+var features: [Landmark] {
+    landmarks.filter { $0.isFeatured }
+}
+```
 
 **Step 4** <br>
+CategoryHome.swift에서 목록의 맨 위에 첫 번째 추천 landmark 이미지를 추가한다.
+이 뷰를 이후 tutorial에서 대화형 회전 목마로 전환한다.
+지금은 크기가 조정되고 잘린 미리보기 이미지가 있는 주요 landmark 중 하나를 표시한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            modelData.features[0].image
+                .resizable()
+                .scaledToFill()
+                .frame(height: 200)
+                .clipped()
+
+            ForEach(modelData.categories.keys.sorted(), id: \.self) { key in
+                CategoryRow(categoryName: key, items: modelData.categories[key]!)
+            }
+        }
+        .navigationTitle("Featured")
+    }
+}
+```
 
 **Step 5** <br>
+콘텐츠가 화면의 가장자리까지 확장될 수 있도록 두 종류의 landmark 미리보기에서 삽입 모서리를 0으로 설정한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            modelData.features[0].image
+                .resizable()
+                .scaledToFill()
+                .frame(height: 200)
+                .clipped()
+                .listRowInsets(EdgeInsets())
+
+            ForEach(modelData.categories.keys.sorted(), id: \.self) { key in
+                CategoryRow(categoryName: key, items: modelData.categories[key]!)
+            }
+            .listRowInsets(EdgeInsets())
+        }
+        .navigationTitle("Featured")
+    }
+}
+```
 
 ### Section 5
 ## Add Navigation Between Sections
+
+<p align="center">
+    <img width="449" src="https://user-images.githubusercontent.com/60697742/131081067-14d03b12-c35f-40c8-a6f3-c48613b746eb.png">
+</p>
 
 **Step 1** <br>
 
