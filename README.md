@@ -30,3 +30,10 @@ Apple Developer SwiftUI Tutorials
 
 ## Drawing and Animation
 ### [Animating Views and Transitions](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DrawingAnimation02)
+
+<p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/131076298-f029b194-de80-4ddf-8d31-0a1e97c24d25.mov">
+</p>
+
+## App Design and Layout
+### [Composing Complex Interfaces](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DesignLayout01)
