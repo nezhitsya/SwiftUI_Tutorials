@@ -121,22 +121,149 @@ var body: some View {
 ### Section 3
 ## Create a Category Row
 
+<p align="center">
+    <img width="394" src="https://user-images.githubusercontent.com/60697742/131079106-1304f7f6-35a4-4927-98c8-d49804c066bc.png">
+</p>
+
+landmark는 가로로 스크롤되는 행에 각 카테고리를 표시한다.
+행을 나타내는 새 뷰 유형을 추가한 다음 새 뷰에서 해당 카테고리에 대한 모든 Landmark를 표시한다.
+
+Creating and Combining Views에서 생성한 landmark 뷰의 일부를 재사용하여 landmark의 친숙한 미리보기를 생성한다.
+
 **Step 1** <br>
+행의 내용을 보관하기 위한 새 사용자 정의 뷰 CategoryRow를 정의한다.
 
 **Step 2** <br>
+카테고리 이름 및 해당 카테고리의 항목 목록에 대한 속성을 추가한다.
+
+```swift
+struct CategoryRow: View {
+    var categoryName: String
+    var items: [Landmark]
+
+    var body: some View {
+        Text("Hello, World!")
+    }
+}
+
+struct CategoryRow_Previews: PreviewProvider {
+    static var landmarks = ModelData().landmarks
+
+    static var previews: some View {
+        CategoryRow(
+            categoryName: landmarks[0].category.rawValue,
+            items: Array(landmarks.prefix(3))
+        )
+    }
+}
+```
 
 **Step 3** <br>
+카테고리 이름을 표시한다.
+
+```swift
+var body: some View {
+    Text(categoryName)
+        .font(.headline)
+}
+```
 
 **Step 4** <br>
+카테고리 항목을 HStack에 넣고 카테고리 이름을 가진 항목을 VStack에 그룹화한다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading) {
+        Text(categoryName)
+            .font(.headline)
+
+        HStack(alignment: .top, spacing: 0) {
+            ForEach(items) { landmark in
+                Text(landmark.name)
+            }
+        }
+    }
+}
+```
 
 **Step 5** <br>
+높이 frame(width:height:)를 지정하고 padding을 추가하고 스크롤 뷰로 HStack을 감싸 콘텐츠에 공간을 제공한다.
+더 큰 데이터 샘플링으로 뷰 미리보기를 업데이트하면 스크롤 동작이 올바른지 더 쉽게 확인할 수 있다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading) {
+        Text(categoryName)
+            .font(.headline)
+            .padding(.leading, 15)
+            .padding(.top, 5)
+
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 0) {
+                ForEach(items) { landmark in
+                    Text(landmark.name)
+                }
+            }
+        }
+        .frame(height: 185)
+    }
+}
+```
 
 **Step 6** <br>
+하나의 landmark를 표시하는 CategoryItem이라는 새 설정 뷰를 생성한다.
+
+```swift
+struct CategoryItem: View {
+    var landmark: Landmark
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            landmark.image
+                .resizable()
+                .frame(width: 155, height: 155)
+                .cornerRadius(5)
+            Text(landmark.name)
+                .font(.caption)
+        }
+        .padding(.leading, 15)
+    }
+}
+
+struct CategoryItem_Previews: PreviewProvider {
+    static var previews: some View {
+        CategoryItem(landmark: ModelData().landmarks[0])
+    }
+}
+```
 
 **Step 7** <br>
+CategoryRow.swift에서 landmark의 이름을 담고 있는 Text를 새로운 CategoryItem 뷰로 교체한다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading) {
+        Text(categoryName)
+            .font(.headline)
+            .padding(.leading, 15)
+            .padding(.top, 5)
+
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .top, spacing: 0) {
+                ForEach(items) { landmark in
+                    CategoryItem(landmark: landmark)
+                }
+            }
+        }
+        .frame(height: 185)
+    }
+}
+```
 
 ### Section 4
 ## Complete the Category View
+
+카테고리 홈 페이지에 행과 추천 이미지를 추가한다.
 
 **Step 1** <br>
 
