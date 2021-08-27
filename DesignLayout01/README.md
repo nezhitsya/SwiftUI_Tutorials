@@ -9,6 +9,7 @@ landmark의 카테고리 뷰는 수평으로 스크롤되는 landmark의 수직 
 
 <p align="center">
     <img width="394" src="https://user-images.githubusercontent.com/60697742/131077506-0290fe95-3936-4ca7-952d-1d4c66c936bb.png">
+    <img width="394" src="https://user-images.githubusercontent.com/60697742/131081796-0646a628-ecb7-4b1a-b4e4-1c4d52b30a4e.png">
 </p>
 
 카테고리 별 landmark를 정렬하는 뷰를 만들고 뷰 상단에서 주요 landmark를 강조 표시하여 landmark를 탐색하는 다른 방법을 제공할 수 있다.
@@ -123,6 +124,7 @@ var body: some View {
 
 <p align="center">
     <img width="394" src="https://user-images.githubusercontent.com/60697742/131079106-1304f7f6-35a4-4927-98c8-d49804c066bc.png">
+    <img width="394" src="https://user-images.githubusercontent.com/60697742/131081711-6283d378-1f8f-4d08-8a65-8788819bf364.png">
 </p>
 
 landmark는 가로로 스크롤되는 행에 각 카테고리를 표시한다.
