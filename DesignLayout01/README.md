@@ -18,7 +18,7 @@ landmark의 카테고리 뷰는 수평으로 스크롤되는 landmark의 수직 
 
 **Step 2** <br>
 다양한 카테고리를 가져올 NavigationView를 추가한다.
-네비게이션 뷰를 NavigationLink 인스턴스 및 관련 modifier와 함께 사용하여 앱에서 계층적 탐색 구조를 구축한다.
+네비게이션 뷰를 NavigationLink 인스턴스 및 관련 modifier와 함께 사용하여 앱에서 계층적 네비게이션 구조를 구축한다.
 
 ```swift
 struct CategoryHome: View {
@@ -352,16 +352,103 @@ var body: some View {
     <img width="449" src="https://user-images.githubusercontent.com/60697742/131081067-14d03b12-c35f-40c8-a6f3-c48613b746eb.png">
 </p>
 
+뷰에 다게 분류된 모든 landmark가 표시되므로 사용자는 앱의 각 section에 도달할 수 있는 방법이 필요하다.
+네비게이션 및 프레젠테이션 API를 사용하여 탭 뷰에서 카테고리 홈, 상세 뷰 및 즐겨찾기 목록을 탐색할 수 있도록 한다.
+
 **Step 1** <br>
+CategoryRow.swift에서 기존 CategoryItem을 NavigationLink로 감싼다.
+카테고리 항목 자체는 버튼의 레이블이며 대상은 카드가 나타내는 landmark에 대한 landmark 세부 정보 뷰이다.
+
+```swift
+ScrollView(.horizontal, showsIndicators: false) {
+    HStack(alignment: .top, spacing: 0) {
+        ForEach(items) { landmark in
+            NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+                CategoryItem(landmark: landmark)
+            }
+        }
+    }
+}
+.frame(height: 185)
+```
+
+CategoryRow에서 다음 단계의 효과를 볼 수 있도록 미리보기를 고정한다.
 
 **Step 2** <br>
+renderingMode(_:) 및 foregroundColor( :) modifier를 적용하여 카테고리 항목의 네비게이션 모양을 변경한다.
+네비게이션 링크의 레이블로 전달한 텍스트는 환경의 강조 색상을 사용하여 렌더링되고 이미지를 템플릿 이미지로 렌더링 될 수 있다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading) {
+        landmark.image
+            .renderingMode(.original)
+            .resizable()
+            .frame(width: 155, height: 155)
+            .cornerRadius(5)
+        Text(landmark.name)
+            .foregroundColor(.primary)
+            .font(.caption)
+    }
+    .padding(.leading, 15)
+}
+```
+
+다음으로 사용자가 방금 만든 카테고리 뷰와 기존 landmark 목록 중에서 선택할 수 있는 탭 뷰를 표시하도록 앱의 메인 콘텐츠 뷰를 수정한다.
 
 **Step 3** <br>
+미리보기를 고정 해제하고 ContentView로 전환한 다음 표시할 탭의 열거형을 추가한다.
+
+```swift
+enum Tab {
+    case featured
+    case list
+}
+```
 
 **Step 4** <br>
+탭 선택에 대한 state 변수를 추가하고 기본 값을 지정한다.
+
+```swift
+@State private var selection: Tab = .featured
+```
 
 **Step 5** <br>
+LandmarkList와 새로운 CategoryHome을 감싸는 탭 뷰를 만든다.
+각 뷰의 tag(_:) modifier는 선택 속성이 취할 수 있는 가능한 값 중 하나와 일치하므로 TabView는 사용자 인터페이스에서 선택할 때 표시할 뷰를 조정할 수 있다.
+
+```swift
+var body: some View {
+    TabView(selection: $selection) {
+        CategoryHome()
+            .tag(Tab.featured)
+
+        LandmarkList()
+            .tag(Tab.list)
+    }
+}
+```
 
 **Step 6** <br>
+각 탭에 레이블을 지정한다.
+
+```swift
+var body: some View {
+    TabView(selection: $selection) {
+        CategoryHome()
+            .tabItem {
+                Label("Featured", systemImage: "star")
+            }
+            .tag(Tab.featured)
+
+        LandmarkList()
+            .tabItem {
+                Label("List", systemImage: "list.bullet")
+            }
+            .tag(Tab.list)
+    }
+}
+```
 
 **Step 7** <br>
+실시간 미리보기를 시작하고 새로운 네비게이션 기능을 사용해본다.
