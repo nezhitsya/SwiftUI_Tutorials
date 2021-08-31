@@ -39,7 +39,7 @@ Apple Developer SwiftUI Tutorials
 ### [Composing Complex Interfaces](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DesignLayout01)
 
 <p align="center">
-    <img width="300" src="">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/131443932-670e761d-9b0a-46af-b553-b76910b724a9.mp4">
 </p>
 
 # App Design and Layout
