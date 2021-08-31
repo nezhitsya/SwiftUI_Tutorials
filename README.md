@@ -44,3 +44,10 @@ Apple Developer SwiftUI Tutorials
 
 # App Design and Layout
 ### [Working with UI Controls](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DesignLayout02)
+
+<p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/131454677-a10ffff2-32d6-4cc3-9325-4d1686cfe82d.mov">
+</p>
+
+# Framework Integration
+### [Interfacing with UIKit](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration01)

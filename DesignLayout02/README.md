@@ -453,18 +453,197 @@ struct ProfileHost: View {
 프로필 요약의 일관성을 위해 편집기에서 프로필 세부 정보를 동일한 순서로 추가한다.
 
 **Step 1** <br>
+ProfileEditor라는 새 뷰를 만들고 사용자의 프로필의 초안 사본에 대한 바인딩을 포함한다.
+뷰의 첫 번째 컨트롤은 문자열 바인딩(이 경우, 사용자가 선택한 표시 이름)을 제어하고 업데이트하는 TextField이다.
+텍스트 필드를 생성할 때 문자열에 대한 레비을과 바인딩을 제공한다.
+
+```swift
+struct ProfileEditor: View {
+    @Binding var profile: Profile
+    
+    var body: some View {
+        List {
+            HStack {
+                Text("Username").bold()
+                Divider()
+                TextField("Username", text: $profile.username)
+            }
+        }
+    }
+}
+
+struct ProfileEditor_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileEditor(profile: .constant(.default))
+    }
+}
+```
 
 **Step 2** <br>
+프로필 편집기를 포함하고 프로필 바인딩을 전달하도록 ProfileHost의 조건부 컨텐츠를 업데이트한다.
+이제 Edit을 누르면 프로필 편집 뷰가 표시된다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading, spacing: 20) {
+        HStack {
+            Spacer()
+            EditButton()
+        }
+
+        if editMode?.wrappedValue == .inactive {
+            ProfileSummary(profile: modelData.profile)
+        } else {
+            ProfileEditor(profile: $draftProfile)
+        }
+    }
+    .padding()
+}
+```
 
 **Step 3** <br>
+landmark 관련 이벤트에 대한 알림 수신에 대한 사용자의 기본 설정에 해당하는 토글을 추가한다.
+토글은 켜거나 끌 수 있는 컨트롤이므로 예 또는 아니오 기본 설정과 같은 Boolean 값에 적합하다.
+
+```swift
+var body: some View {
+    List {
+        HStack {
+            Text("Username").bold()
+            Divider()
+            TextField("Username", text: $profile.username)
+        }
+            
+        Toggle(isOn: $profile.prefersNotifications) {
+            Text("Enable Notifications").bold()
+        }
+    }
+}
+```
 
 **Step 4** <br>
+Picker 컨트롤과 레이블을 VStack에 배치하여 landmark 사진에 선호하는 계절을 선택할 수 있도록 한다.
+
+```swift
+VStack(alignment: .leading, spacing: 20) {
+    Text("Seasonal Photo").bold()
+                
+    Picker("Seasonal Photo", selection: $profile.seasonalPhoto) {
+        ForEach(Profile.Season.allCases) { season in
+            Text(season.rawValue).tag(season)
+        }
+    }
+    .pickerStyle(SegmentedPickerStyle())
+}
+```
 
 **Step 5** <br>
+마지막으로, 시즌 선택기 아래 DatePicker를 추가하여 landmark 방문 목표 날짜를 수정할 수 있도록 한다.
+
+```swift
+struct ProfileEditor: View {
+    @Binding var profile: Profile
+    
+    var dateRange: ClosedRange<Date> {
+        let min = Calendar.current.date(byAdding: .year, value: -1, to: profile.goalDate)!
+        let max = Calendar.current.date(byAdding: .year, value: 1, to: profile.goalDate)!
+        return min...max
+    }
+    
+    var body: some View {
+        List {
+            HStack {
+                Text("Username").bold()
+                Divider()
+                TextField("Username", text: $profile.username)
+            }
+            
+            Toggle(isOn: $profile.prefersNotifications) {
+                Text("Enable Notifications").bold()
+            }
+            
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Seasonal Photo").bold()
+                
+                Picker("Seasonal Photo", selection: $profile.seasonalPhoto) {
+                    ForEach(Profile.Season.allCases) { season in
+                        Text(season.rawValue).tag(season)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+
+            DatePicker(selection: $profile.goalDate, in: dateRange, displayedComponents: .date) {
+                Text("Goal Date").bold()
+            }
+        }
+    }
+}
+```
 
 ### Section 4
 ## Delay Edit Propagation
 
+사용자가 편집 모드를 종료할 때까지 편집 내용이 적용되지 않도록 하려면 편집하는 동안 프로필의 초안 사본을 사용한 다음 사용자가 편집을 확인한 경우에만 초안 사본을 실제 사본에 할당한다.
+
 **Step 1** <br>
+ProfileHost에 취소 버튼을 추가한다.
+EditButton이 제공하는 Done 버튼과 달리 Cancel 버튼은 종료 시 실제 프로필 데이터에 편집 내용을 적용하지 않는다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading, spacing: 20) {
+        HStack {
+            if editMode?.wrappedValue == .active {
+                Button("Cancel") {
+                    draftProfile = modelData.profile
+                    editMode?.animation().wrappedValue = .inactive
+                }
+            }
+            Spacer()
+            EditButton()
+        }
+
+        if editMode?.wrappedValue == .inactive {
+            ProfileSummary(profile: modelData.profile)
+        } else {
+            ProfileEditor(profile: $draftProfile)
+        }
+    }
+    .padding()
+}
+```
 
 **Step 2** <br>
+onAppear(perform:) 및 onDisappear(perfomr:) modifier를 적용하여 편집기를 올바른 프로필 데이터로 채우고 사용자가 Done 버튼을 누를 때 영구 프로필을 업데이트한다.
+그렇지 않으면 다음에 편집 모드가 활성화될 때 이전 값이 나타난다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading, spacing: 20) {
+        HStack {
+            if editMode?.wrappedValue == .active {
+                Button("Cancel") {
+                    draftProfile = modelData.profile
+                    editMode?.animation().wrappedValue = .inactive
+                }
+            }
+            Spacer()
+            EditButton()
+        }
+
+        if editMode?.wrappedValue == .inactive {
+            ProfileSummary(profile: modelData.profile)
+        } else {
+            ProfileEditor(profile: $draftProfile)
+                .onAppear {
+                    draftProfile = modelData.profile
+                }
+                .onDisappear {
+                    modelData.profile = draftProfile
+                }
+        }
+    }
+    .padding()
+}
+```
