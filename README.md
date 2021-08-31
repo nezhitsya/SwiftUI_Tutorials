@@ -28,7 +28,6 @@ Apple Developer SwiftUI Tutorials
     <img width="300" src="https://user-images.githubusercontent.com/60697742/130566056-20f2e237-2880-4018-b25a-3416f20866e8.png">
 </p>
 
-## Drawing and Animation
 ### [Animating Views and Transitions](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DrawingAnimation02)
 
 <p align="center">
@@ -42,12 +41,11 @@ Apple Developer SwiftUI Tutorials
     <img width="300" src="https://user-images.githubusercontent.com/60697742/131443932-670e761d-9b0a-46af-b553-b76910b724a9.mp4">
 </p>
 
-# App Design and Layout
 ### [Working with UI Controls](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/DesignLayout02)
 
 <p align="center">
     <img width="300" src="https://user-images.githubusercontent.com/60697742/131454677-a10ffff2-32d6-4cc3-9325-4d1686cfe82d.mov">
 </p>
 
-# Framework Integration
+## Framework Integration
 ### [Interfacing with UIKit](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration01)
