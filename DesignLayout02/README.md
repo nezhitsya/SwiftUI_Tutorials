@@ -311,20 +311,146 @@ var body: some View {
 ### Section 2
 ## Add an Edit Mode
 
+사용자는 프로필 세부 정보를 보거나 편집해야 한다.
+기존 ProfileHost에 EditButton을 추가한 다음 개별 값을 편집하기 위한 컨트롤이 있는 뷰를 만들어 편집 모드를 추가한다.
+
 **Step 1** <br>
+ProfileHost를 선택하고 모델 데이터를 환경 개체로 미리보기에 추가한다.
+이 뷰는 @EnvironmentObject 특성을 가진 속성을 사용하지 않지만 이 뷰의 자식인 ProfileSummary는 사용한다.
+따라서 modifier가 없으면 미리보기가 실패한다.
+
+```swift
+struct ProfileHost_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileHost()
+            .environmentObject(ModelData())
+    }
+}
+```
 
 **Step 2** <br>
+환경의 \.editMode에서 벗어나는 Environment 뷰 속성을 추가한다.
+SwiftUI는 @Environment 속성을 사용하여 접근할 수 있는 값에 대한 저장소를 환경에 제공한다.
+editMode 값에 접근하여 편집 범위를 읽거나 작성한다.
+
+```swift
+struct ProfileHost: View {
+    @Environment(\.editMode) var editMode
+    @State private var draftProfile = Profile.default
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            ProfileSummary(profile: draftProfile)
+        }
+        .padding()
+    }
+}
+```
 
 **Step 3** <br>
+환경의 editMode 값을 켜고 끄는 Edit 버튼을 생성한다.
+EditButton은 이전 단계에서 접근한 것과 동일한 editMode 환경 값을 제어한다.
+
+```swift
+var body: some View {
+    VStack(alignment: .leading, spacing: 20) {
+        HStack {
+            Spacer()
+            EditButton()
+        }
+
+        ProfileSummary(profile: draftProfile)
+    }
+    .padding()
+}
+```
 
 **Step 4** <br>
+사용자가 프로필 뷰를 닫은 후에도 지속되는 사용자 프로필의 인스턴스를 포함하도록 ModelData 클래스를 업데이트한다.
+
+```swift
+final class ModelData: ObservableObject {
+    @Published var landmarks: [Landmark] = load("landmarkData.json")
+    var hikes: [Hike] = load("hikeData.json")
+    @Published var profile = Profile.default
+
+    var features: [Landmark] {
+        landmarks.filter { $0.isFeatured }
+    }
+
+    var categories: [String: [Landmark]] {
+        Dictionary(
+            grouping: landmarks,
+            by: { $0.category.rawValue }
+        )
+    }
+}
+```
 
 **Step 5** <br>
+환경에서 사용자의 프로필 데이터를 읽어 데이터 제어권을 프로필 호스트로 넘긴다.
+사용자가 이름을 입력하는 것과 같이 편집 내용을 확인하기 전에 전역 앱 상태를 업데이트하지 않도록 편집 뷰 자체 복사본에서 작동한다.
+
+```swift
+struct ProfileHost: View {
+    @Environment(\.editMode) var editMode
+    @EnvironmentObject var modelData: ModelData
+    @State private var draftProfile = Profile.default
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Spacer()
+                EditButton()
+            }
+
+            ProfileSummary(profile: modelData.profile)
+        }
+        .padding()
+    }
+}
+```
 
 **Step 6** <br>
+정적 프로필 또는 편집 모드 용 뷰를 표시하는 조건부 뷰를 추가한다.
+실시간 미리보기를 실행하고 편집 버튼을 누르면 편집 모드로 진입하는 효과를 확인할 수 있다.
+현재 편집 모드 뷰는 정적 텍스트 필드이다.
+
+```swift
+struct ProfileHost: View {
+    @Environment(\.editMode) var editMode
+    @EnvironmentObject var modelData: ModelData
+    @State private var draftProfile = Profile.default
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack {
+                Spacer()
+                EditButton()
+            }
+
+            if editMode?.wrappedValue == .inactive {
+                ProfileSummary(profile: modelData.profile)
+            } else {
+                Text("Profile Editor")
+            }
+        }
+        .padding()
+    }
+}
+```
 
 ### Section 3
 ## Define the Profile Editor
+
+<p align="center">
+    <img width="348" src="https://user-images.githubusercontent.com/60697742/131448160-90e8e57f-b809-4dff-a9f3-300fae9662c0.png">
+</p>
+
+사용자 프로필 편집기는 주로 프로필의 개별 세부 정보를 변경하는 다양한 컨트롤로 구성된다.
+배지와 같은 프로필의 일부 항목은 사용자가 편집할 수 없으므로 편집기에 표시되지 않는다.
+
+프로필 요약의 일관성을 위해 편집기에서 프로필 세부 정보를 동일한 순서로 추가한다.
 
 **Step 1** <br>
 
