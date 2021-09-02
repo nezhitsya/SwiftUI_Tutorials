@@ -46,18 +46,122 @@ func makeUIViewController(context: Context) -> UIPageViewController {
 ```
 
 **Step 3** <br>
+setViewControllers(_:direction:animated:)를 호출하여 표시할 뷰 컨트롤러를 제공하는 updateUIViewController( :context:) 메서드를 추가한다.
+지금은 모든 업데이트에서 페이지 SwiftUI 뷰를 호스팅하는 UIHostingController를 생성한다.
+후에, 페이지 뷰 컨트롤러의 수명동안 컨트롤러를 한 번만 초기화하여 이를 보다 효율적으로 만들 것이다.
+
+```swift
+func updateUIViewController(_ pageViewController: UIPageViewController, context: Context) {
+    pageViewController.setViewControllers(
+        [UIHostingController(rootView: pages[0])], direction: .forward, animated: true)
+}
+```
+
+계속하기 전에, 페이지로 사용할 기능 카드를 준비한다.
 
 **Step 4** <br>
+다운로드한 프로젝트 파일의 Resources 디렉토리에 있는 이미지를 앱의 Asset 카탈로그로 드래그한다.
+landmark의 특징 이미지가 있는 경우, 일반 이미지와 크기가 다르다.
 
 **Step 5** <br>
+특징 이미지가 있는 경우, 이를 반환하는 Landmark 구조에 계산된 속성을 추가한다.
+
+```swift
+var featureImage: Image? {
+    isFeatured ? Image(imageName + "_feature") : nil
+}
+```
 
 **Step 6** <br>
+landmark의 특징 이미지를 표시하는 FeatureCard.swift라는 새 SwiftUI 뷰 파일을 추가한다.
+
+```swift
+struct FeatureCard: View {
+    var landmark: Landmark
+
+    var body: some View {
+        landmark.featureImage?
+            .resizable()
+            .aspectRatio(3 / 2, contentMode: .fit)
+    }
+}
+
+struct FeatureCard_Previews: PreviewProvider {
+    static var previews: some View {
+        FeatureCard(landmark: ModelData().features[0])
+    }
+}
+```
 
 **Step 7** <br>
+이미지의 landmark에 대한 텍스트 정보를 오버레이한다.
+
+```swift
+struct FeatureCard: View {
+    var landmark: Landmark
+
+    var body: some View {
+        landmark.featureImage?
+            .resizable()
+            .aspectRatio(3 / 2, contentMode: .fit)
+            .overlay(TextOverlay(landmark: landmark))
+    }
+}
+
+struct TextOverlay: View {
+    var landmark: Landmark
+
+    var gradient: LinearGradient {
+        LinearGradient(
+            gradient: Gradient(
+                colors: [Color.black.opacity(0.6), Color.black.opacity(0)]),
+            startPoint: .bottom,
+            endPoint: .center)
+    }
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            Rectangle().fill(gradient)
+            VStack(alignment: .leading) {
+                Text(landmark.name)
+                    .font(.title)
+                    .bold()
+                Text(landmark.park)
+            }
+            .padding()
+        }
+        .foregroundColor(.white)
+    }
+}
+```
+
+다음으로 UIViewControllerRepresentable 뷰를 표시하는 사용자 지정 뷰를 생성한다.
 
 **Step 8** <br>
+PageView.swift라는 새 SwiftUI 뷰 파일을 생성하고 PageView 유형을 업데이트하여 PageViewController를 자식 뷰로 선언한다.
+Xcode가 Page의 유형을 유추할 수 없기 때문에 미리보기가 실패한다.
+
+```swift
+struct PageView<Page: View>: View {
+    var pages: [Page]
+
+    var body: some View {
+        PageViewController(pages: pages)
+    }
+}
+```
 
 **Step 9** <br>
+필요한 뷰 배열을 전달하도록 PreviewProvider를 업데이트하면 미리보기가 작동하기 시작한다.
+
+```swift
+struct PageView_Previews: PreviewProvider {
+    static var previews: some View {
+        PageView(pages: ModelData().features.map { FeatureCard(landmark: $0) })
+            .aspectRatio(3 / 2, contentMode: .fit)
+    }
+}
+```
 
 ### Section 2
 ## Create the View Controller’s Data Source
