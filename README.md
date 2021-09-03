@@ -49,3 +49,9 @@ Apple Developer SwiftUI Tutorials
 
 ## Framework Integration
 ### [Interfacing with UIKit](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration01)
+
+<p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/131967673-0d32e110-1f53-46ed-9a68-93b638b5c65f.mov">
+</p>
+
+### [Creating a watchOS App](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration02)

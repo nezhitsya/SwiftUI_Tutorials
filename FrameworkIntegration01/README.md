@@ -389,13 +389,97 @@ func makeUIViewController(context: Context) -> UIPageViewController {
 SwiftUI UIViewRepresentable 뷰로 감싸진 사용자 정의 UIPageControl을 뷰에 추가할 준비가 되었다.
 
 **Step 1** <br>
+PageControl.swift라는 새 SwiftUI 뷰 파일을 만든다.
+UIViewRepresentable 프로토콜을 준수하도록 PageControl 유형을 업데이트한다.
+UIViewRepresentable 및 UIViewControllerRepresentable 유형은 기본 UIKit 유형에 해당하는 메서드와 함께 동일한 수명 주기를 갖는다.
+
+```swift
+import SwiftUI
+import UIKit
+
+struct PageControl: UIViewRepresentable {
+    var numberOfPages: Int
+    @Binding var currentPage: Int
+
+    func makeUIView(context: Context) -> UIPageControl {
+        let control = UIPageControl()
+        control.numberOfPages = numberOfPages
+
+        return control
+    }
+
+    func updateUIView(_ uiView: UIPageControl, context: Context) {
+        uiView.currentPage = currentPage
+    }
+}
+```
 
 **Step 2** <br>
+텍스트 상자를 페이지 컨트롤로 변경하고 레이아웃을 위패 VStack에서 ZStack으로 전환한다.
+페이지 수와 현재 페이지에 대한 바인딩을 전달하기 때문에 페이지 컨트롤리 이미 올바른 값을 표시하고 있다.
+
+```swift
+var body: some View {
+    ZStack(alignment: .bottomTrailing) {
+        PageViewController(pages: pages, currentPage: $currentPage)
+        PageControl(numberOfPages: pages.count, currentPage: $currentPage)
+            .frame(width: CGFloat(pages.count * 18))
+            .padding(.trailing)
+    }
+}
+```
+
+다음으로, 페이지 컨트롤을 대화형으로 만들어 사용자가 한 쪽 또는 다른 쪽을 눌러 페이지 사이를 이동할 수 있도록 한다.
 
 **Step 3** <br>
+PageControl에 중첩된 Coordinator 유형을 만들고 makeCoordinator() 메서드를 추가하여 새 coordinator를 만들고 반환한다.
+UIPageControl과 같은 UIControl 서브클래스는 위임 대신 target-action 패턴을 사용하기 때문에 이 coordinator는 @objc 메서드를 구현하여 현재 페이지 바인딩을 업데이트한다.
+
+```swift
+func makeCoordinator() -> Coordinator {
+    Coordinator(self)
+}
+
+class Coordinator: NSObject {
+    var control: PageControl
+
+    init(_ control: PageControl) {
+        self.control = control
+    }
+
+    @objc
+    func updateCurrentPage(sender: UIPageControl) {
+        control.currentPage = sender.currentPage
+    }
+}
+```
 
 **Step 4** <br>
+수행할 작업으로 updateCurrentPage(sender:) 메서드를 지정하여 coordinator를 valueChanged 이벤트의 대상으로 추가한다.
+
+```swift
+func makeUIView(context: Context) -> UIPageControl {
+    let control = UIPageControl()
+    control.numberOfPages = numberOfPages
+    control.addTarget(
+        context.coordinator,
+        action: #selector(Coordinator.updateCurrentPage(sender:)),
+        for: .valueChanged)
+
+    return control
+}
+
+```
 
 **Step 5** <br>
+마지막으로 CategoryHome에서 placeholder 기능 이미지를 새 페이지 뷰로 바꾼다.
+
+```swift
+PageView(pages: modelData.features.map { FeatureCard(landmark: $0) })
+    .aspectRatio(3 / 2, contentMode: .fit)
+    .listRowInsets(EdgeInsets())
+```
 
 **Step 6** <br>
+이제 다양한 모든 상호작용을 시도한다.
+PageView는 UIKit 및 SwiftUI 뷰 및 컨트롤러가 함께 작동할 수 있는 방법을 보여준다.
