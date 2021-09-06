@@ -55,3 +55,9 @@ Apple Developer SwiftUI Tutorials
 </p>
 
 ### [Creating a watchOS App](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration02)
+
+<p align="center">
+    <img width="300" src="https://user-images.githubusercontent.com/60697742/132162558-f6ef20ae-f162-4947-a349-423bac3b586d.mov">
+</p>
+
+### [Creating a macOS App](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration03)
