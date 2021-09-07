@@ -467,42 +467,277 @@ landmark 빌드 타겟을 선택하여 iOS에서 목록이 어떻게 보이는�
 ### Section 4
 ## Update the List View
 
+<p align="center">
+    <img width="354" src="https://user-images.githubusercontent.com/60697742/132274168-e7057b5b-e15b-4909-8684-084c7b4cff1b.png">
+</p>
+
+LandmarkRow와 마찬가지로 LandmarkList는 이미 macOS에서 작동하지만 개선사항을 사용할 수 있다.
+예를 들어, 즐겨찾기만 표시하는 토글을 도구 모음의 메뉴로 이동하면 추가 필터링 컨트롤로 결합할 수 있다.
+
+변경사항은 macOS와 iOS 모두에서 작동하지만 watchOS에서는 적용하기 어려울 것이다.
+다행히도 이전 section에서 이미 목록을 watchOS용 별도 파일로 분할했다.
+
 **Step 1** <br>
+MacLandmarks 체계로 돌아가서 iOS 및 macOS를 대상으로 하는 LandmarkList 파일에서 새 도구 모음 modifier 내부에 메뉴가 포함된 ToolbarItem을 추가한다.
+앱을 실행할 때까지 도구 모음 업데이트를 볼 수 없다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            Toggle(isOn: $showFavoritesOnly) {
+                Text("Favorites only")
+            }
+
+            ForEach(filteredLandmarks) { landmark in
+                NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+                    LandmarkRow(landmark: landmark)
+                }
+            }
+        }
+        .navigationTitle("Landmarks")
+        .frame(minWidth: 300)
+        .toolbar {
+            ToolbarItem {
+                Menu {
+
+                } label: {
+                    Label("Filter", systemImage: "slider.horizontal.3")
+                }
+            }
+        }
+    }
+}
+```
 
 **Step 2** <br>
+즐겨찾기 이동 메뉴로 전환한다.
+이렇게 하면 플랫픔별 방식으로 토글이 도구 모음으로 이동하므로 landmark 목록이 얼마나 길어지거나 사용자가 스크롤하는 길이에 관계없이 접근할 수 있다는 추가 이점이 있다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            ForEach(filteredLandmarks) { landmark in
+                NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+                    LandmarkRow(landmark: landmark)
+                }
+            }
+        }
+        .navigationTitle("Landmarks")
+        .frame(minWidth: 300)
+        .toolbar {
+            ToolbarItem {
+                Menu {
+                    Toggle(isOn: $showFavoritesOnly) {
+                        Label("Favorites only", systemImage: "star.fill")
+                    }
+                } label: {
+                    Label("Filter", systemImage: "slider.horizontal.3")
+                }
+            }
+        }
+    }
+}
+```
+
+더 많은 공간을 사용할 수 있게 되면 카테고리별로 landmark 목록을 필터링하기 위한 새로운 컨트롤을 추가할 수 있다.
 
 **Step 3** <br>
+FilterCategory 열거를 추가하여 필터 상태를 설명한다.
+case 문자열을 Landmark 구조의 Category 열거와 일치시켜 비교할 수 있도록 하고 모든 case를 포함하여 필터링을 끈다.
+
+```swift
+enum FilterCategory: String, CaseIterable, Identifiable {
+    case all = "All"
+    case lakes = "Lakes"
+    case rivers = "Rivers"
+    case mountains = "Mountains"
+
+    var id: FilterCategory { self }
+}
+```
 
 **Step 4** <br>
+모든 경우를 기본값으로 하는 필터 상태 변수를 추가한다.
+목록 뷰에 필터 상태를 저장하면 사용자가 각각 고유한 필터 설정이 있는 어려 목록 뷰 창을 열어 다양한 방식으로 데이터를 볼 수 있다.
+
+```swift
+@State private var filter = FilterCategory.all
+```
 
 **Step 5** <br>
+지정된 landmark의 카테고리와 결합된 새 필터 설정을 고려하도록 FilteredLandmarks를 업데이트한다.
+
+```swift
+var filteredLandmarks: [Landmark] {
+    modelData.landmarks.filter { landmark in
+        (!showFavoritesOnly || landmark.isFavorite)
+            && (filter == .all || filter.rawValue == landmark.category.rawValue)
+    }
+}
+```
 
 **Step 6** <br>
+메뉴에 Picker를 추가하여 필터 범주를 설정한다.
+필터에는 몇 가지 항목만 있으므로 InlinePickerStyle을 사용하여 항목을 모두 함께 표시한다.
+
+```swift
+var body: some View {
+    NavigationView {
+        List {
+            ForEach(filteredLandmarks) { landmark in
+                NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+                    LandmarkRow(landmark: landmark)
+                }
+            }
+        }
+        .navigationTitle("Landmarks")
+        .frame(minWidth: 300)
+        .toolbar {
+            ToolbarItem {
+                Menu {
+                    Picker("Category", selection: $filter) {
+                        ForEach(FilterCategory.allCases) { category in
+                            Text(category.rawValue).tag(category)
+                        }
+                    }
+                    .pickerStyle(InlinePickerStyle())
+
+                    Toggle(isOn: $showFavoritesOnly) {
+                        Label("Favorites only", systemImage: "star.fill")
+                    }
+                } label: {
+                    Label("Filter", systemImage: "slider.horizontal.3")
+                }
+            }
+        }
+    }
+}
+```
 
 **Step 7** <br>
+필터 상태와 일치하도록 네비게이션 제목을 업데이트한다.
+이 변경사항은 iOS 앱에서 유용하다.
+
+```swift
+var title: String {
+    let title = filter == .all ? "Landmarks" : filter.rawValue
+    return showFavoritesOnly ? "Favorite \(title)" : title
+}
+```
 
 **Step 8** <br>
+넓은 레이아웃의 두 번째 뷰에 대한 placeholder로 NavigationView에 두 번째 자식 뷰를 추가한다.
+두 번째 자식 뷰를 추가하면 자동으로 목록이 사이드 바 목록 스타일을 사용하도록 변환된다.
 
 **Step 9** <br>
+macOS 대상을 실행하고 메뉴가 어떻게 작동하는지 확인한다.
 
 **Step 10** <br>
+Landmarks 빌드 타겟을 선택하고 실시간 미리보기를 사용하여 새로운 필터링이 iOS에서도 잘 작동하는지 확인한다.
+iOS는 이제 사이드 바 목록 스타일도 사용한다.
 
 ### Section 5
 ## Add a Built-in Menu Command
 
+<p align="center">
+    <img width="348" src="https://user-images.githubusercontent.com/60697742/132275644-8810f4bc-83b7-43b7-ba21-782784c2092c.png">
+</p>
+
+SwiftUI 수명 주기를 사용하여 앱을 만들 때 시스템은 가장 앞에 있는 창을 닫거나 앱을 종료하는 것과 같이 일반적으로 필요한 항목이 있는 메뉴를 자동으로 만든다.
+SwiftUI를 사용하면 동작이 내장된 다른 일반적인 명령과 완전히 사용자 정의된 명령을 추가할 수 있다.
+
+이 section에서는 사용자가 사이드바를 토글하여 닫은 후 다시 가져올 수 있도록 하는 시스템 제공 명령을 추가한다.
+
 **Step 1** <br>
+MacLandmarks 대상으로 돌아가서 macOS 앱을 실행하고 목락과 상세 뷰 사이의 구분 기호를 왼쪽 끝까지 끌어간다.
+마우스 버튼에서 손을 떼면 목록을 다시 가져올 방법 없이 목록이 사라진다.
+이 문제를 해결하기 위해 명령을 추가한다.
 
 **Step 2** <br>
+LandmarkCommands.swift라는 새 Swift 파일을 추가하고 macOS와 iOS를 모두 포함하도록 대상을 설정한다.
+공유 LandmarkList는 결국 이 파일에서 정의한 일부 유형에 의존하기 때문에 iOS도 대상으로 한다.
 
 **Step 3** <br>
+SwiftUI를 import하고 계산된 본문 속성과 함께 Commands 프로토콜을 준수하는 LandmarkCommands 구조를 추가한다.
+뷰 구조와 마찬가지로 Commands 구조에는 뷰 대신 명령을 사용하는 경우를 제외하고 빌더 의미 체계를 사용하는 계산된 본문 속성이 필요하다.
+
+```swift
+import SwiftUI
+
+struct LandmarkCommands: Commands {
+    var body: some Commands {
+    }
+}
+```
 
 **Step 4** <br>
+본문에 SidebarCommands 명령을 추가한다.
+이 기본 제공 명령 세트에는 사이드바를 전환하는 명령이 포함되어 있다.
+
+```swift
+struct LandmarkCommands: Commands {
+    var body: some Commands {
+        SidebarCommands()
+    }
+}
+```
+
+앱에서 명령을 사용하려면 장면에 명령을 적용해야 한다.
+이 작업은 다음에 수행할 것이다.
 
 **Step 5** <br>
+LandmarksApp,swift 파일을 열고 commands(content:) 장면 modifier를 사용하여 LandmarkCommands를 적용한다.
+장면 modifier는 뷰 대신 장면에 적용한다는 점을 제외하면 뷰 modifier와 같이 작동한다.
+
+```swift
+var body: some Scene {
+    WindowGroup {
+        ContentView()
+            .environmentObject(modelData)
+    }
+    .commands {
+        LandmarkCommands()
+    }
+
+    #if os(watchOS)
+    WKNotificationScene(controller: NotificationController.self, category: "LandmarkNear")
+    #endif
+}
+```
 
 **Step 6** <br>
+macOS 앱을 다시 실행하고 View > Toggle Sidebar menu 명령을 사용하여 목록 뷰를 복원할 수 있는지 확인한다.
+
+뷸행히도, 명령에 watchOS 가용성이 없기 때문에 watchOS 앱 빌드에 실패한다.
+다음에 이것을 고칠 것이다.
 
 **Step 7** <br>
+기본 창 그룹을 추출하고 명령에 조건부 컴파일을 적용한다.
+watchOS 앱이 다시 빌드된다.
+
+```swift
+var body: some Scene {
+    let mainWindow = WindowGroup {
+        ContentView()
+            .environmentObject(modelData)
+    }
+
+    #if os(macOS)
+    mainWindow
+        .commands {
+            LandmarkCommands()
+        }
+    #else
+    mainWindow
+    #endif
+
+    #if os(watchOS)
+    WKNotificationScene(controller: NotificationController.self, category: "LandmarkNear")
+    #endif
+}
+```
 
 ### Section 6
 ## Add a Custom Menu Command
