@@ -742,17 +742,102 @@ var body: some Scene {
 ### Section 6
 ## Add a Custom Menu Command
 
+<p align="center">
+    <img width="348" src="https://user-images.githubusercontent.com/60697742/132457985-1fbee8fe-da56-4d2d-a7cb-9b40da9055bf.png">
+</p>
+
+이전 section에서 기본 제공 메뉴 명령 세트를 추가했다.
+이 section에서는 현재 선택한 랜드마크의 즐겨찾기 상태를 전환하는 사용자 지정 명령을 추가한다.
+현재 선택된 landmark를 확인하려면 포커스 바인딩을 사용한다.
+
 **Step 1** <br>
+LandmarkCommands에서 SelectedLandmarkKey라는 사용자 지정 키를 사용하여 selectedLandmark 값으로 FocusedValues 구조를 확장한다.
+집중된 값을 정의하는 패턴은 새 환경 값을 정의하는 패턴과 유사하다.
+개인 키를 사용하여 시스템 정의 FocusedValues 구조에서 사용자 정의 속성을 읽고 쓴다.
+
+```swift
+private struct SelectedLandmarkKey: FocusedValueKey {
+    typealias Value = Binding<Landmark>
+}
+
+extension FocusedValues {
+    var selectedLandmark: Binding<Landmark>? {
+        get { self[SelectedLandmarkKey.self] }
+        set { self[SelectedLandmarkKey.self] = newValue }
+    }
+}
+```
 
 **Step 2** <br>
+@FocusedBinding 속성 감싸기를 사용하여 현재 선택한 landmark를 추적하는 MenuContent 뷰를 만든다.
+여기서 값을 읽는다.
+나중에 사용자가 선택하는 목록 뷰에서 설정한다.
+
+```swift
+struct LandmarkCommands: Commands {
+    private struct MenuContent: View {
+        @FocusedBinding(\.selectedLandmark) var selectedLandmark
+
+        var body: some View {
+        }
+    }
+
+    var body: some Commands {
+        SidebarCommands()
+    }
+}
+```
 
 **Step 3** <br>
+선택한 landmark의 즐겨찾기 상태를 토글하고 현재 선택한 landmark와 해당 상태에 따라 모양이 변경되는 버튼을 뷰에 추가한다.
+
+```swift
+var body: some View {
+    Button("\(selectedLandmark?.isFavorite == true ? "Remove" : "Mark") as Favorite") {
+        selectedLandmark?.isFavorite.toggle()
+    }
+    .disabled(selectedLandmark == nil)
+}
+```
 
 **Step 4** <br>
+keyboardShortcut(_:modifiers:) modifier를 사용하여 메뉴 항목에 대한 키보드 단축키를 추가한다.
+SwiftUI는 메뉴에 키보드 단축키를 자동으로 표시한다.
+
+```swift
+var body: some View {
+    Button("\(selectedLandmark?.isFavorite == true ? "Remove" : "Mark") as Favorite") {
+        selectedLandmark?.isFavorite.toggle()
+    }
+    .keyboardShortcut("f", modifiers: [.shift, .option])
+    .disabled(selectedLandmark == nil)
+}
+```
 
 **Step 5** <br>
+정의한 메뉴 콘텐츠를 사용하는 Landmarks라는 명령에 새 CommandMenu를 추가한다.
+
+```swift
+var body: some Commands {
+    SidebarCommands()
+    CommandMenu("Landmark") {
+        MenuContent()
+    }
+}
+```
+
+이제 메뉴에 새 명령이 포함되지만 이 명령이 작동하려면 selectedLandmark 중심 바인딩을 설정해야 한다.
 
 **Step 6** <br>
+LandmarkList.swift에서 선택한 landmark에 대한 state 변수와 선택된 landmark의 인덱스를 나타내는 계산된 속성을 추가한다.
+
+```swift
+@State private var selectedLandmark: Landmark?
+
+var index: Int? {
+    modelData.landmarks.firstIndex(where: { $0.id == selectedLandmark?.id })
+}
+```
 
 **Step 7** <br>
 
