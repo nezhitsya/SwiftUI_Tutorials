@@ -840,28 +840,153 @@ var index: Int? {
 ```
 
 **Step 7** <br>
+선택한 값에 바인딩하여 List를 초기화하고 네비게이션 링크에 태그를 추가한다.
+태그는 특정 landmark를 ForEach의 지정된 항목과 연결한 후 선택을 유도한다.
+
+```swift
+List(selection: $selectedLandmark) {
+    ForEach(filteredLandmarks) { landmark in
+        NavigationLink(destination: LandmarkDetail(landmark: landmark)) {
+            LandmarkRow(landmark: landmark)
+        }
+        .tag(landmark)
+    }
+}
+```
 
 **Step 8** <br>
+landmark 배열의 값을 바인딩하여 NavigationView에 focuseValue(_:) modifier를 추가한다.
+여기에서 조회를 수행하여 복사본이 아니라 모델에 저장된 landmark를 수정하고 있는지 확인한다.
+
+```swift
+.focusedValue(\.selectedLandmark, $modelData.landmarks[index ?? 0])
+```
 
 **Step 9** <br>
+macOS 앱을 실행하고 새로운 메뉴 항목을 사용해본다.
 
 ### Section 7
 ## Add Preferences with a Settings Scene
 
+<p align="center">
+    <img width="348" src="https://user-images.githubusercontent.com/60697742/132610668-bc34663f-ce3b-4dec-ab94-fdddb8c8daba.png">
+</p>
+
+사용자는 표준 기본 설정 메뉴 항목을 사용하여 macOS 앱의 설정을 조정할 수 있기를 기대한다.
+설정 장면을 추가하여 MacLandmarks에 기본 설정을 추가한다.
+장면의 뷰는 MapView의 초기 확대 / 축소 수준을 제어하는 데 사용할 기본 설정 창의 내용을 정의한다.
+값을 지도 뷰에 전달하고 @AppStorage 속성을 감싸 영구적으로 저장한다.
+
+초기 확대 / 축소를 근거리, 중간 또는 원거리의 세 가지 수준 중 하나로 설정하는 컨트롤을 MapView에 추가하는 것으로 시작한다.
+
 **Step 1** <br>
+MapView.swift에서 확대 / 축소 수준을 특성화하기 위해 확대 / 축소 열거를 추가한다.
+
+```swift
+enum Zoom: String, CaseIterable, Identifiable {
+    case near = "Near"
+    case medium = "Medium"
+    case far = "Far"
+
+    var id: Zoom {
+        return self
+    }
+}
+```
 
 **Step 2** <br>
+시본적으로 중간 확대 / 축소 수준을 사용하는 zoom이라는 @AppStorage 속성을 추가한다.
+UserDefaults에 항목을 저장할 때와 같이 매개변수를 고유하게 식별하는 저장소 키를 사용한다.
+이것이 SwiftUI가 의존하는 기본 메커니즘이기 때문이다.
+
+```swift
+@AppStorage("MapView.zoom")
+private var zoom: Zoom = .medium
+```
 
 **Step 3** <br>
+영역 속성을 구성하는 데 사용되는 경도 및 위도 delta를 확대 / 축소에 따라 달라지는 값으로 변경한다.
+
+```swift
+var delta: CLLocationDegrees {
+    switch zoom {
+    case .near: return 0.02
+    case .medium: return 0.2
+    case .far: return 2
+    }
+}
+
+private func setRegion(_ coordinate: CLLocationCoordinate2D) {
+    region = MKCoordinateRegion(
+        center: coordinate,
+        span: MKCoordinateSpan(latitudeDelta: delta, longitudeDelta: delta)
+    )
+}
+```
+
+delta가 변결될 때마다 SwiftUI가 지도를 새로 고치도록 하려면 지역을 계산하고 적용하는 방식을 변경해야 한다.
 
 **Step 4** <br>
+지역 state 변수, setRegion 메서드, 지도의 onAppear modifier를 지도 initializer에 상수 바인딩으로 전달하는 계산된 지역 속성으로 변경한다.
+
+```swift
+var body: some View {
+    Map(coordinateRegion: .constant(region))
+}
+
+var region: MKCoordinateRegion {
+    MKCoordinateRegion(
+        center: coordinate,
+        span: MKCoordinateSpan(latitudeDelta: delta, longitudeDelta: delta)
+    )
+}
+```
+
+다음으로 저장된 확대 / 축소 값을 제어하는 Settings 장면을 만든다.
 
 **Step 5** <br>
+macOS 앱만 대상으로 하는 LandmarkSettings라는 새 SwiftUI 뷰를 생성한다.
 
 **Step 6** <br>
+맵 뷰에서 사용한 것과 동일한 키를 사용하는 @AppStorage 속성을 추가한다.
+
+```swift
+@AppStorage("MapView.zoom")
+private var zoom: MapView.Zoom = .medium
+```
 
 **Step 7** <br>
+바인딩을 통해 확대 / 축소 값을 제어하는 Picker를 추가한다.
+일반적으로 양식을 사용하여 설정 뷰에서 컨트롤을 정렬한다.
+
+```swift
+var body: some View {
+    Form {
+        Picker("Map Zoom:", selection: $zoom) {
+            ForEach(MapView.Zoom.allCases) { level in
+                Text(level.rawValue)
+            }
+        }
+        .pickerStyle(InlinePickerStyle())
+    }
+    .frame(width: 300)
+    .navigationTitle("Landmark Settings")
+    .padding(80)
+}
+```
 
 **Step 8** <br>
+LandmarksApp.swift에서 Settings 장면을 앱에 추가한다.
+단, macOS에만 해당된다.
+
+```swift
+#if os(macOS)
+Settings {
+    LandmarkSettings()
+}
+#endif
+```
 
 **Step 9** <br>
+앱을 실행하고 환경 설정을 시도한다.
+확대 / 축소 수준을 변경할 때마다 지도가 새로 고쳐진다.
