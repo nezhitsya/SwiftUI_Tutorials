@@ -61,3 +61,7 @@ Apple Developer SwiftUI Tutorials
 </p>
 
 ### [Creating a macOS App](https://github.com/nezhitsya/SwiftUI_Tutorials/tree/master/FrameworkIntegration03)
+
+<p align="center">
+    <img width="900" src="https://user-images.githubusercontent.com/60697742/132631418-f1370c42-c5d1-4127-bb04-6790bf582290.mp4">
+</p>
